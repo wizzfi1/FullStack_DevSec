@@ -36,7 +36,7 @@ jobs:
       - name: Trivy Scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: myapp:${{ github.sha }}
+          image-ref: mydev:${{ github.sha }}
 
       - name: Push to Docker Hub
         run: |
