@@ -1,4 +1,4 @@
-name: Gitleaks Scan
+name: Gitleaks Secret Scan
 
 on:
   push:
@@ -14,8 +14,6 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Run Gitleaks
-        uses: zricethezav/gitleaks-action@v2
-        with:
-          config-path: ""
-          verbose: true
-          redaction: true
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
