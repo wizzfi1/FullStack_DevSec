@@ -44,10 +44,10 @@ jobs:
           
           IMAGE_NAME=docker.io/${{ secrets.DOCKERHUB_USERNAME }}/mydev
           
-          docker tag myapp:${{ github.sha }} $IMAGE_NAME:${{ github.sha }}
+          docker tag mydev:${{ github.sha }} $IMAGE_NAME:${{ github.sha }}
           docker push $IMAGE_NAME:${{ github.sha }}
           
-          docker tag myapp:${{ github.sha }} $IMAGE_NAME:latest
+          docker tag mydev:${{ github.sha }} $IMAGE_NAME:latest
           docker push $IMAGE_NAME:latest
 
 
