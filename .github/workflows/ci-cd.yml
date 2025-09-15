@@ -38,15 +38,18 @@ jobs:
         with:
           image-ref: myapp:${{ github.sha }}
 
-      - name: Push to GHCR
+      - name: Push to Docker Hub
         run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository }} 
-          IMAGE_NAME=$(echo $IMAGE_NAME | tr '[:upper:]' '[:lower:]' | tr '_' '-')
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
           
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          IMAGE_NAME=docker.io/${{ secrets.DOCKERHUB_USERNAME }}/mydev
           
           docker tag myapp:${{ github.sha }} $IMAGE_NAME:${{ github.sha }}
           docker push $IMAGE_NAME:${{ github.sha }}
+          
+          docker tag myapp:${{ github.sha }} $IMAGE_NAME:latest
+          docker push $IMAGE_NAME:latest
+
 
 
   deploy:
