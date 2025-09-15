@@ -10,43 +10,34 @@ jobs:
   build-test-scan:
     runs-on: ubuntu-latest
     steps:
-      # Checkout repo
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Setup Node.js for tests + lint
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      # Install dependencies
       - name: Install Dependencies
         run: npm install
 
-      # Run ESLint
       - name: Run ESLint
         run: npm run lint
 
-      # Run Tests
       - name: Run Tests
         run: npm test
 
-      # Dependency vulnerability check
       - name: Dependency Audit
         run: npm audit --audit-level=high
 
-      # Build Docker image
       - name: Build Docker Image
         run: docker build -t myapp:${{ github.sha }} .
 
-      # Scan Docker image with Trivy
       - name: Trivy Scan
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: myapp:${{ github.sha }}
 
-      # Push Docker image to GitHub Container Registry
       - name: Push to GHCR
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
