@@ -52,19 +52,19 @@ jobs:
     needs: build-test-scan
     if: github.ref == 'refs/heads/develop'
     steps:
-      - name: Deploy to Render (Staging)
-        uses: render-examples/gh-actions-deploy@v1
-        with:
-          api-key: ${{ secrets.RENDER_API_KEY }}
-          service-id: ${{ secrets.RENDER_SERVICE_ID }}
+      - name: Trigger Render Staging Deploy
+        run: |
+          curl -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys" \
+            -H "Accept: application/json" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}"
 
   deploy-prod:
     runs-on: ubuntu-latest
     needs: build-test-scan
     if: github.ref == 'refs/heads/main'
     steps:
-      - name: Deploy to Render (Production)
-        uses: render-examples/gh-actions-deploy@v1
-        with:
-          api-key: ${{ secrets.RENDER_API_KEY }}
-          service-id: ${{ secrets.RENDER_SERVICE_ID_PROD }}
+      - name: Trigger Render Production Deploy
+        run: |
+          curl -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID_PROD }}/deploys" \
+            -H "Accept: application/json" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}"
