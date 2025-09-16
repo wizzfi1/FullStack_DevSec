@@ -54,7 +54,7 @@ jobs:
     steps:
       - name: Trigger Render Staging Deploy
         run: |
-          curl -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys" \
+          curl -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE }}/deploys" \
             -H "Accept: application/json" \
             -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}"
 
@@ -68,3 +68,38 @@ jobs:
           curl -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID_PROD }}/deploys" \
             -H "Accept: application/json" \
             -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}"
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: [build-test-scan, deploy-staging, deploy-prod]
+    if: always()   
+    steps:
+      - name: Slack Notification for Staging
+        if: github.ref == 'refs/heads/develop'
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_USERNAME: Wizfi-Pipeline
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_TITLE: "Staging Deployment Status"
+          SLACK_MESSAGE: |
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref }}
+            Commit: ${{ github.sha }}
+            Status: ${{ job.status }}
+            Environment: Staging
+
+      - name: Slack Notification for Production
+        if: github.ref == 'refs/heads/main'
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_USERNAME: Wizfi-Pipeline
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_TITLE: "Production Deployment Status"
+          SLACK_MESSAGE: |
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref }}
+            Commit: ${{ github.sha }}
+            Status: ${{ job.status }}
+            Environment: Production
