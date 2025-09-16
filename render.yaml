@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: mydev-staging
+    env: docker
+    plan: free
+    branch: develop
+    rootDir: .
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: staging
+      - key: PORT
+        value: 10000
+
+  - type: web
+    name: mydev-prod
+    env: docker
+    plan: free
+    branch: main
+    rootDir: .
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
