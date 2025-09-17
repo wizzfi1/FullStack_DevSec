@@ -30,3 +30,25 @@ services:
         value: 10000
       - key: SENTRY_DSN
         sync: false   
+
+  - type: web
+    name: prometheus
+    env: docker
+    plan: free
+    rootDir: ./infra/prometheus
+    dockerfilePath: ./infra/prometheus/Dockerfile
+    autoDeploy: false
+    envVars:
+      - key: PORT
+        value: 9090
+
+  - type: web
+    name: grafana
+    env: docker
+    plan: free
+    rootDir: ./infra/grafana
+    dockerfilePath: ./infra/grafana/Dockerfile
+    autoDeploy: false
+    envVars:
+      - key: PORT
+        value: 3000
