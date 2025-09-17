@@ -13,13 +13,15 @@ Sentry.init({
 app.use(Sentry.Handlers.requestHandler());
 
 // Example route
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
   res.send("You are safe in Wizfi's Pipeline!");
 });
 
 // Debug route to test Sentry
-app.get("/debug-sentry", (req, res) => {
-  throw new Error("Debug Sentry error! If Sentry is working, you’ll see this in your dashboard.");
+app.get("/debug-sentry", () => {
+  throw new Error(
+    "Debug Sentry error! If Sentry is working, you’ll see this in your dashboard."
+  );
 });
 
 // Error handler (after routes)
