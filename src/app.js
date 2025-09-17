@@ -1,27 +1,30 @@
 const express = require("express");
 const Sentry = require("@sentry/node");
+const Tracing = require("@sentry/tracing");
 
 const app = express();
 
-// Initialize Sentry (error capture only)
+// Initialize Sentry (v7 API)
 Sentry.init({
   dsn: process.env.SENTRY_DSN || "",
-  tracesSampleRate: 0, // disable performance tracing for now
+  integrations: [
+    new Tracing.Integrations.Express({ app }), // valid in v7
+  ],
+  tracesSampleRate: 1.0, // lower this in prod (e.g. 0.1)
 });
 
 // Request handler (before routes)
 app.use(Sentry.Handlers.requestHandler());
+app.use(Sentry.Handlers.tracingHandler());
 
 // Example route
-app.get("/", (_req, res) => {
+app.get("/", (req, res) => {
   res.send("You are safe in Wizfi's Pipeline!");
 });
 
 // Debug route to test Sentry
-app.get("/debug-sentry", () => {
-  throw new Error(
-    "Debug Sentry error! If Sentry is working, you’ll see this in your dashboard."
-  );
+app.get("/debug-sentry", (req, res) => {
+  throw new Error("Debug Sentry error!");
 });
 
 // Error handler (after routes)
