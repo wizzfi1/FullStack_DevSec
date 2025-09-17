@@ -1,21 +1,16 @@
 const express = require("express");
 const Sentry = require("@sentry/node");
-const Tracing = require("@sentry/tracing");
 
 const app = express();
 
-// Initialize Sentry
+// Initialize Sentry (error capture only)
 Sentry.init({
   dsn: process.env.SENTRY_DSN || "",
-  integrations: [
-    new Tracing.Integrations.Express({ app: require("express") }), // <- use express module, not instance
-  ],
-  tracesSampleRate: 1.0, // consider lowering in prod, e.g. 0.1
+  tracesSampleRate: 0, // disable performance tracing for now
 });
 
 // Request handler (before routes)
 app.use(Sentry.Handlers.requestHandler());
-app.use(Sentry.Handlers.tracingHandler());
 
 // Example route
 app.get("/", (req, res) => {
