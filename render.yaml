@@ -36,7 +36,7 @@ services:
     env: docker
     plan: free
     rootDir: ./infra/prometheus
-    dockerfilePath: Dockerfile
+    dockerfilePath: ./infra/prometheus/Dockerfile
     autoDeploy: false
     envVars:
       - key: PORT
