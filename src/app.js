@@ -8,7 +8,7 @@ const app = express();
 Sentry.init({
   dsn: process.env.SENTRY_DSN || "",
   integrations: [
-    new Tracing.Integrations.Express({ app }), // valid in v7
+    new Tracing.Integrations.Express({ app }), // works fine with v7
   ],
   tracesSampleRate: 1.0, // lower this in prod (e.g. 0.1)
 });
@@ -22,8 +22,9 @@ app.get("/", (req, res) => {
   res.send("You are safe in Wizfi's Pipeline!");
 });
 
-// Debug route to test Sentry
+// Debug route to test Sentry (ESLint safe)
 app.get("/debug-sentry", (req, res) => {
+  res.status(500).send("Triggering Sentry debug error...");
   throw new Error("Debug Sentry error!");
 });
 
