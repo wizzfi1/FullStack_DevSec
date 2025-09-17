@@ -12,6 +12,8 @@ services:
         value: staging
       - key: PORT
         value: 10000
+      - key: SENTRY_DSN
+        sync: false   
 
   - type: web
     name: mydev-prod
@@ -26,3 +28,5 @@ services:
         value: production
       - key: PORT
         value: 10000
+      - key: SENTRY_DSN
+        sync: false   
