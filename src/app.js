@@ -4,10 +4,12 @@ const Tracing = require("@sentry/tracing");
 
 const app = express();
 
-// Initialize Sentry
+// Initialize Sentry AFTER creating `app`
 Sentry.init({
   dsn: process.env.SENTRY_DSN || "",
-  integrations: [new Tracing.Integrations.Express({ app })],
+  integrations: [
+    new Tracing.Integrations.Express({ app }), // requires app to be defined
+  ],
   tracesSampleRate: 1.0,
 });
 
