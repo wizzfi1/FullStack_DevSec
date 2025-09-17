@@ -1,8 +1,7 @@
 module.exports = {
-    Integrations: {
-      Express: function () {
-        return {};
-      },
+  Integrations: {
+    Express: function () {
+      return {};
     },
-  };
-  
+  },
+};

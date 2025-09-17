@@ -7,9 +7,7 @@ const app = express();
 // Initialize Sentry
 Sentry.init({
   dsn: process.env.SENTRY_DSN || "",
-  integrations: [
-    new Tracing.Integrations.Express({ app }),
-  ],
+  integrations: [new Tracing.Integrations.Express({ app })],
   tracesSampleRate: 1.0,
 });
 
