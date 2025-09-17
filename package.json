@@ -15,6 +15,8 @@
   "author": "Your Name",
   "license": "MIT",
   "dependencies": {
+    "@sentry/node": "^7.120.4",
+    "@sentry/tracing": "^7.120.4",
     "express": "^4.21.2"
   },
   "devDependencies": {
@@ -29,5 +31,15 @@
   },
   "directories": {
     "test": "tests"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "setupFiles": [
+      "<rootDir>/tests/jest.setup.js"
+    ],
+    "moduleNameMapper": {
+      "^@sentry/node$": "<rootDir>/tests/__mocks__/@sentry/node.js",
+      "^@sentry/tracing$": "<rootDir>/tests/__mocks__/@sentry/tracing.js"
+    }
   }
 }
