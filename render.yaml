@@ -52,3 +52,16 @@ services:
     envVars:
       - key: PORT
         value: 3000
+
+  - type: web
+    name: alertmanager
+    env: docker
+    rootDir: ./infra/alertmanager
+    dockerfilePath: Dockerfile
+    plan: free
+    autoDeploy: false
+    envVars:
+      - key: SLACK_WEBHOOK_URL
+        sync: false
+      - key: PORT
+        value: 9093
