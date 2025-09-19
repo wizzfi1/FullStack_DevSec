@@ -1,0 +1,71 @@
+{
+  "id": null,
+  "title": "Node.js App Observability",
+  "tags": ["nodejs", "prometheus"],
+  "timezone": "browser",
+  "schemaVersion": 36,
+  "version": 1,
+  "refresh": "10s",
+  "panels": [
+    {
+      "type": "graph",
+      "title": "CPU Usage (%)",
+      "targets": [
+        {
+          "expr": "process_cpu_user_seconds_total",
+          "legendFormat": "CPU User Time",
+          "refId": "A"
+        }
+      ],
+      "id": 1
+    },
+    {
+      "type": "graph",
+      "title": "Memory Usage (MB)",
+      "targets": [
+        {
+          "expr": "process_resident_memory_bytes / 1024 / 1024",
+          "legendFormat": "Resident Memory",
+          "refId": "A"
+        }
+      ],
+      "id": 2
+    },
+    {
+      "type": "graph",
+      "title": "HTTP Requests per Second",
+      "targets": [
+        {
+          "expr": "rate(http_requests_total[1m])",
+          "legendFormat": "{{method}} {{route}}",
+          "refId": "A"
+        }
+      ],
+      "id": 3
+    },
+    {
+      "type": "graph",
+      "title": "Error Rate (5xx per Second)",
+      "targets": [
+        {
+          "expr": "rate(http_requests_total{status=~\"5..\"}[5m])",
+          "legendFormat": "Errors (5xx)",
+          "refId": "A"
+        }
+      ],
+      "id": 4
+    },
+    {
+      "type": "graph",
+      "title": "95th Percentile Latency",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))",
+          "legendFormat": "p95 latency",
+          "refId": "A"
+        }
+      ],
+      "id": 5
+    }
+  ]
+}
