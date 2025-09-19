@@ -1,77 +1,71 @@
 {
-    "id": null,
-    "title": "Node.js / Express Observability",
-    "tags": ["node", "express", "prometheus"],
-    "timezone": "browser",
-    "schemaVersion": 30,
-    "version": 1,
-    "panels": [
-      {
-        "type": "graph",
-        "title": "HTTP Requests per Second",
-        "targets": [
-          {
-            "expr": "rate(http_requests_total[1m])",
-            "legendFormat": "{{method}} {{route}} {{status}}"
-          }
-        ]
-      },
-      {
-        "type": "graph",
-        "title": "Error Rate per Route",
-        "targets": [
-          {
-            "expr": "rate(http_requests_total{status=~\"5..\"}[1m])",
-            "legendFormat": "{{method}} {{route}}"
-          }
-        ]
-      },
-      {
-        "type": "graph",
-        "title": "CPU Usage %",
-        "targets": [
-          {
-            "expr": "rate(process_cpu_user_seconds_total[1m]) * 100",
-            "legendFormat": "User CPU"
-          },
-          {
-            "expr": "rate(process_cpu_system_seconds_total[1m]) * 100",
-            "legendFormat": "System CPU"
-          }
-        ],
-        "yaxes": [
-          { "format": "percent", "min": 0, "max": 100 },
-          { "format": "short" }
-        ]
-      },
-      {
-        "type": "graph",
-        "title": "95th Percentile Request Latency",
-        "targets": [
-          {
-            "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))",
-            "legendFormat": "{{method}} {{route}}"
-          }
-        ],
-        "yaxes": [
-          { "format": "s", "min": 0 },
-          { "format": "short" }
-        ]
-      },
-      {
-        "type": "graph",
-        "title": "Memory Usage",
-        "targets": [
-          {
-            "expr": "process_resident_memory_bytes",
-            "legendFormat": "Resident Memory"
-          }
-        ],
-        "yaxes": [
-          { "format": "bytes", "min": 0 },
-          { "format": "short" }
-        ]
-      }
-    ]
-  }
-  
+  "id": null,
+  "title": "Node.js App Observability",
+  "tags": ["nodejs", "prometheus"],
+  "timezone": "browser",
+  "schemaVersion": 36,
+  "version": 1,
+  "refresh": "10s",
+  "panels": [
+    {
+      "type": "graph",
+      "title": "CPU Usage (%)",
+      "targets": [
+        {
+          "expr": "process_cpu_user_seconds_total",
+          "legendFormat": "CPU User Time",
+          "refId": "A"
+        }
+      ],
+      "id": 1
+    },
+    {
+      "type": "graph",
+      "title": "Memory Usage (MB)",
+      "targets": [
+        {
+          "expr": "process_resident_memory_bytes / 1024 / 1024",
+          "legendFormat": "Resident Memory",
+          "refId": "A"
+        }
+      ],
+      "id": 2
+    },
+    {
+      "type": "graph",
+      "title": "HTTP Requests per Second",
+      "targets": [
+        {
+          "expr": "rate(http_requests_total[1m])",
+          "legendFormat": "{{method}} {{route}}",
+          "refId": "A"
+        }
+      ],
+      "id": 3
+    },
+    {
+      "type": "graph",
+      "title": "Error Rate (5xx per Second)",
+      "targets": [
+        {
+          "expr": "rate(http_requests_total{status=~\"5..\"}[5m])",
+          "legendFormat": "Errors (5xx)",
+          "refId": "A"
+        }
+      ],
+      "id": 4
+    },
+    {
+      "type": "graph",
+      "title": "95th Percentile Latency",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))",
+          "legendFormat": "p95 latency",
+          "refId": "A"
+        }
+      ],
+      "id": 5
+    }
+  ]
+}

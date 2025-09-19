@@ -1,11 +1,12 @@
 global:
   scrape_interval: 15s
+  evaluation_interval: 15s
 
 scrape_configs:
   - job_name: "myapp"
     metrics_path: /metrics
+    scheme: https   # Render apps use HTTPS
     static_configs:
       - targets:
-          # Replace with your staging/prod hostnames + ports
           - "mydev-staging.onrender.com"
           - "mydev-prod.onrender.com"
