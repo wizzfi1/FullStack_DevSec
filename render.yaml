@@ -40,9 +40,9 @@ services:
     autoDeploy: false
     envVars:
       - key: SLACK_WEBHOOK_URL
-        sync: false   # set this in Render Dashboard → use your Slack webhook URL
+        sync: false   # set in Render dashboard
       - key: PORT
-        value: 9093   # default Alertmanager port
+        value: 9093   # Alertmanager default port
 
   - type: web
     name: prometheus
@@ -54,8 +54,6 @@ services:
     envVars:
       - key: PORT
         value: 9090
-    dependsOn:
-      - alertmanager   # ensure Alertmanager comes up before Prometheus
 
   - type: web
     name: grafana
