@@ -4,8 +4,8 @@ FROM alpine:3.20
 RUN apk add --no-cache gettext curl tar
 
 # Install Alertmanager
-ENV ALERTMANAGER_VERSION=v0.27.0
-RUN curl -L "https://github.com/prometheus/alertmanager/releases/download/${ALERTMANAGER_VERSION}/alertmanager-${ALERTMANAGER_VERSION}.linux-amd64.tar.gz" \
+ENV ALERTMANAGER_VERSION=0.27.0
+RUN curl -L "https://github.com/prometheus/alertmanager/releases/download/v${ALERTMANAGER_VERSION}/alertmanager-${ALERTMANAGER_VERSION}.linux-amd64.tar.gz" \
   | tar -xz && \
   mv alertmanager-${ALERTMANAGER_VERSION}.linux-amd64/alertmanager /bin/alertmanager && \
   mv alertmanager-${ALERTMANAGER_VERSION}.linux-amd64/amtool /bin/amtool && \
