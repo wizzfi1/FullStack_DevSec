@@ -6,7 +6,7 @@ RUN apk add --no-cache gettext
 FROM prom/alertmanager:v0.27.0
 
 # Copy envsubst binary from builder
-COPY --from=builder /usr/bin/envsubst /usr/local/bin/envsubst
+COPY --from=builder /usr/bin/envsubst /bin/envsubst
 
 # Copy files with executable permission — done as root before user switch
 COPY --chmod=755 alertmanager.yml.tmpl /etc/alertmanager/alertmanager.yml.tmpl
