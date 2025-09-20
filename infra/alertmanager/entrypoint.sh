@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-# Substitute env vars into config
+# Render the config with secrets
 envsubst < /etc/alertmanager/alertmanager.yml.tmpl > /etc/alertmanager/alertmanager.yml
 
 # Start Alertmanager
