@@ -1,21 +1,18 @@
-#!/bin/sh
-set -e
+global:
+  resolve_timeout: 5m
 
-# Check if SLACK_WEBHOOK_URL is set
-if [ -z "$SLACK_WEBHOOK_URL" ]; then
-  echo "❌ ERROR: SLACK_WEBHOOK_URL environment variable is not set!"
-  echo "Please export it before running: export SLACK_WEBHOOK_URL='https://hooks.slack.com/services/...'"
-  exit 1
-fi
+route:
+  receiver: slack-notifications
 
-# Render the config with secrets
-echo "🔧 Replacing webhook URL in alertmanager.yml..."
-envsubst < /etc/alertmanager/alertmanager.yml.tmpl > /etc/alertmanager/alertmanager.yml
-
-# Validate config
-echo "🔍 Validating Alertmanager configuration..."
-alertmanager --config.file=/etc/alertmanager/alertmanager.yml --test
-
-# Start Alertmanager
-echo "🚀 Starting Alertmanager..."
-exec alertmanager --config.file=/etc/alertmanager/alertmanager.yml --storage.path=/alertmanager
+receivers:
+  - name: slack-notifications
+    slack_configs:
+      - api_url: "${SLACK_WEBHOOK_URL}"
+        channel: "#alerts"
+        send_resolved: true
+        title: "[{{ .Status | toUpper }}] {{ .GroupLabels.job }} Alerts"
+        text: >
+          *Alert:* {{ .Annotations.summary }}
+          *Description:* {{ .Annotations.description }}
+          *Severity:* {{ .Labels.severity }}
+          *Time:* {{ .StartsAt }}

@@ -1,16 +1,18 @@
-# Stage 1: Build environment with envsubst
-FROM alpine:3.20 AS builder
-RUN apk add --no-cache gettext
+FROM alpine:3.20
 
-# Stage 2: Final Alertmanager image
-FROM prom/alertmanager:v0.27.0
+# Install required tools: gettext (for envsubst), curl, tar
+RUN apk add --no-cache gettext curl tar
 
-# Copy envsubst binary from builder
-COPY --from=builder /usr/bin/envsubst /usr/bin/envsubst
+# Install Alertmanager
+ENV ALERTMANAGER_VERSION=v0.27.0
+RUN curl -L "https://github.com/prometheus/alertmanager/releases/download/${ALERTMANAGER_VERSION}/alertmanager-${ALERTMANAGER_VERSION}.linux-amd64.tar.gz" \
+  | tar -xz && \
+  mv alertmanager-${ALERTMANAGER_VERSION}.linux-amd64/alertmanager /bin/alertmanager && \
+  mv alertmanager-${ALERTMANAGER_VERSION}.linux-amd64/amtool /bin/amtool && \
+  rm -rf alertmanager-${ALERTMANAGER_VERSION}.linux-amd64
 
-# Copy files with executable permission — done as root before user switch
-COPY --chmod=755 alertmanager.yml.tmpl /etc/alertmanager/alertmanager.yml.tmpl
+# Copy entrypoint + config template
 COPY --chmod=755 entrypoint.sh /entrypoint.sh
+COPY alertmanager.yml.tmpl /etc/alertmanager/alertmanager.yml.tmpl
 
-# Set entrypoint (no need for RUN chmod)
 ENTRYPOINT ["/entrypoint.sh"]

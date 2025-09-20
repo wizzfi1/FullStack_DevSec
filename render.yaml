@@ -32,15 +32,30 @@ services:
         sync: false   
 
   - type: web
+    name: alertmanager
+    env: docker
+    plan: free
+    rootDir: ./infra/alertmanager
+    dockerfilePath: Dockerfile
+    autoDeploy: false
+    envVars:
+      - key: SLACK_WEBHOOK_URL
+        sync: false   # set this in Render Dashboard → use your Slack webhook URL
+      - key: PORT
+        value: 9093   # default Alertmanager port
+
+  - type: web
     name: prometheus
     env: docker
     plan: free
     rootDir: ./infra/prometheus
-    dockerfilePath: Dockerfile   
+    dockerfilePath: Dockerfile
     autoDeploy: false
     envVars:
       - key: PORT
         value: 9090
+    dependsOn:
+      - alertmanager   # ensure Alertmanager comes up before Prometheus
 
   - type: web
     name: grafana
@@ -52,16 +67,3 @@ services:
     envVars:
       - key: PORT
         value: 3000
-
-  - type: web
-    name: alertmanager
-    env: docker
-    rootDir: ./infra/alertmanager
-    dockerfilePath: Dockerfile
-    plan: free
-    autoDeploy: false
-    envVars:
-      - key: SLACK_WEBHOOK_URL
-        sync: false
-      - key: PORT
-        value: 9093
