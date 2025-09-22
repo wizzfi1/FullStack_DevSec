@@ -1,9 +1,7 @@
 FROM alpine:3.20
 
-# Install required tools: gettext (for envsubst), curl, tar
-RUN apk add --no-cache gettext curl tar
+RUN apk add --no-cache gettext curl tar wget
 
-# Install Alertmanager
 ENV ALERTMANAGER_VERSION=0.27.0
 RUN curl -L "https://github.com/prometheus/alertmanager/releases/download/v${ALERTMANAGER_VERSION}/alertmanager-${ALERTMANAGER_VERSION}.linux-amd64.tar.gz" \
   | tar -xz && \
@@ -11,8 +9,16 @@ RUN curl -L "https://github.com/prometheus/alertmanager/releases/download/v${ALE
   mv alertmanager-${ALERTMANAGER_VERSION}.linux-amd64/amtool /bin/amtool && \
   rm -rf alertmanager-${ALERTMANAGER_VERSION}.linux-amd64
 
-# Copy entrypoint + config template
 COPY --chmod=755 entrypoint.sh /entrypoint.sh
 COPY alertmanager.yml.tmpl /etc/alertmanager/alertmanager.yml.tmpl
+
+# Create non-root user
+RUN addgroup -S alert && adduser -S alert -G alert
+USER alert
+
+EXPOSE 9093
+
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:9093/-/healthy || exit 1
 
 ENTRYPOINT ["/entrypoint.sh"]
