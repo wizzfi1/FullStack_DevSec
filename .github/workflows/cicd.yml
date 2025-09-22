@@ -72,7 +72,7 @@ jobs:
       - name: Trigger Render Staging Deploy
         uses: fjogeleit/http-request-action@v1
         with:
-          url: "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE }}/deploys"
+          url: "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys"
           method: "POST"
           customHeaders: '{"Accept": "application/json", "Authorization": "Bearer ${{ secrets.RENDER_API_KEY }}"}'
 
