@@ -42,9 +42,7 @@ jobs:
       - name: Terrascan Scan (IaC security)
         run: |
           echo "🔍 Running Terrascan on supported IaC (Terraform, K8s)..."
-          # Restrict to infra/ folder and supported formats only
           terrascan scan -d infra -i terraform -t aws,gcp,azure,k8s || true
-
 
       # --- Build + Scan Image ---
       - name: Build Docker Image
@@ -69,13 +67,15 @@ jobs:
     needs: build-test-scan
     if: github.ref == 'refs/heads/develop'
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
       - name: Trigger Render Staging Deploy
         uses: fjogeleit/http-request-action@v1
         with:
           url: "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys"
           method: "POST"
           customHeaders: '{"Accept": "application/json", "Authorization": "Bearer ${{ secrets.RENDER_API_KEY }}"}'
-
 
       - name: Sentry Release (Staging)
         uses: getsentry/action-release@v1
@@ -93,13 +93,15 @@ jobs:
     needs: build-test-scan
     if: github.ref == 'refs/heads/main'
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
       - name: Trigger Render Production Deploy
         uses: fjogeleit/http-request-action@v1
         with:
           url: "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID_PROD }}/deploys"
           method: "POST"
           customHeaders: '{"Accept": "application/json", "Authorization": "Bearer ${{ secrets.RENDER_API_KEY }}"}'
-
 
       - name: Sentry Release (Production)
         uses: getsentry/action-release@v1
