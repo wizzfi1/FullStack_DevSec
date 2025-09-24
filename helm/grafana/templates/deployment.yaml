@@ -2,6 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: grafana
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: grafana
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -12,11 +15,20 @@ spec:
       labels:
         app: grafana
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1003
+        runAsGroup: 1003
+        fsGroup: 1003
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: grafana
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}{{- if .Values.image.imageDigest }}@{{ .Values.image.imageDigest }}{{- end }}"
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
+              name: web
           env:
             - name: GF_SECURITY_ADMIN_USER
               valueFrom:
@@ -28,3 +40,29 @@ spec:
                 secretKeyRef:
                   name: grafana-secret
                   key: admin-password
+          resources:
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5

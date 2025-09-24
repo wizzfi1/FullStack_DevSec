@@ -2,6 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: prometheus
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -12,28 +15,60 @@ spec:
       labels:
         app: prometheus
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1002
+        runAsGroup: 1002
+        fsGroup: 1002
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: prometheus
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}{{- if .Values.image.imageDigest }}@{{ .Values.image.imageDigest }}{{- end }}"
+          imagePullPolicy: Always
           args:
             - "--config.file=/etc/prometheus/prometheus.yml"
             - "--storage.tsdb.path=/prometheus"
           ports:
             - containerPort: 9090
+              name: web
+          resources:
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          livenessProbe:
+            httpGet:
+              path: /-/healthy
+              port: 9090
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /-/ready
+              port: 9090
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
           volumeMounts:
-            - name: config-volume
+            - name: config
               mountPath: /etc/prometheus
-
-            - name: alert-rules-volume
-              mountPath: /etc/prometheus/alert-rules.yml
-              subPath: alert-rules.yml
-
-            
+              readOnly: true
+            - name: rules
+              mountPath: /etc/prometheus/rules
+              readOnly: true
       volumes:
-        - name: config-volume
+        - name: config
           configMap:
             name: prometheus-config
-
-        - name: alert-rules-volume
-          mountPath: /etc/prometheus/alert-rules.yml
-          subPath: alert-rules.yml
+        - name: rules
+          configMap:
+            name: prometheus-alert-rules

@@ -2,8 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: prometheus-alert-rules
-  labels:
-    app: prometheus
+  namespace: {{ .Release.Namespace }}
 data:
   alert-rules.yml: |
     groups:
@@ -17,16 +16,16 @@ data:
               severity: warning
             annotations:
               summary: "High CPU usage on {{ $labels.instance }}"
-              description: "CPU usage is above 80% for more than 2 minutes."
+              description: "CPU usage greater than 80% for 2m."
 
       - name: app-alerts
         interval: 30s
         rules:
           - alert: HighErrorRate
-            expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.05
+            expr: rate(http_requests_total{status=~"5.."}[5m]) / max(rate(http_requests_total[5m]), 1) > 0.05
             for: 5m
             labels:
               severity: critical
             annotations:
-              summary: "High 5xx error rate on {{ $labels.instance }}"
-              description: "More than 5% of requests are failing with 5xx errors."
+              summary: "High 5xx error rate"
+              description: "More than 5% 5xx errors over 5m."
