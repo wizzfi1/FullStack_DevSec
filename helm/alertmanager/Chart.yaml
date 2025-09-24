@@ -1,5 +1,9 @@
 apiVersion: v2
 name: alertmanager
-description: Alertmanager for handling Prometheus alerts
+description: A Helm chart for Prometheus Alertmanager with Slack integration
+type: application
 version: 0.1.0
 appVersion: "0.27.0"
+maintainers:
+  - name: Wizfi DevSecOps
+    email: shaibuwisdom@gmail.com

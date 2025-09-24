@@ -1,5 +1,9 @@
 apiVersion: v2
 name: grafana
-description: Grafana dashboards for monitoring mydev
+description: A Helm chart for Grafana dashboards
+type: application
 version: 0.1.0
 appVersion: "11.1.4"
+maintainers:
+  - name: Wizfi DevSecOps
+    email: shaibuwisdom@gmail.com

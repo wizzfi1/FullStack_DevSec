@@ -1,0 +1,44 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Alertmanager Values",
+    "type": "object",
+    "properties": {
+      "replicaCount": {
+        "type": "integer",
+        "default": 1,
+        "minimum": 1,
+        "description": "Number of Alertmanager replicas."
+      },
+      "image": {
+        "type": "object",
+        "properties": {
+          "repository": { "type": "string" },
+          "tag": { "type": "string" },
+          "imageDigest": { "type": "string" }
+        },
+        "required": ["repository", "tag"]
+      },
+      "service": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["ClusterIP", "NodePort", "LoadBalancer"] },
+          "port": { "type": "integer" }
+        }
+      },
+      "resources": {
+        "type": "object",
+        "properties": {
+          "requests": { "type": "object" },
+          "limits": { "type": "object" }
+        }
+      },
+      "slack": {
+        "type": "object",
+        "properties": {
+          "channel": { "type": "string" },
+          "webhookUrl": { "type": "string" }
+        }
+      }
+    }
+  }
+  

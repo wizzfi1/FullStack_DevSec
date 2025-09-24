@@ -1,0 +1,44 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Prometheus Values",
+    "type": "object",
+    "properties": {
+      "replicaCount": { "type": "integer", "default": 1, "minimum": 1 },
+      "image": {
+        "type": "object",
+        "properties": {
+          "repository": { "type": "string" },
+          "tag": { "type": "string" },
+          "imageDigest": { "type": "string" }
+        },
+        "required": ["repository", "tag"]
+      },
+      "service": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string" },
+          "port": { "type": "integer" }
+        }
+      },
+      "resources": { "type": "object" },
+      "alertmanager": {
+        "type": "object",
+        "properties": {
+          "serviceName": { "type": "string" },
+          "servicePort": { "type": "integer" }
+        }
+      },
+      "scrapeConfigs": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "job_name": { "type": "string" },
+            "metrics_path": { "type": "string" },
+            "static_configs": { "type": "array" }
+          }
+        }
+      }
+    }
+  }
+  
