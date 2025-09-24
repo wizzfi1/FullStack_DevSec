@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+        - name: prometheus
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          args:
+            - "--config.file=/etc/prometheus/prometheus.yml"
+            - "--storage.tsdb.path=/prometheus"
+          ports:
+            - containerPort: 9090
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/prometheus
+
+            - name: alert-rules-volume
+              mountPath: /etc/prometheus/alert-rules.yml
+              subPath: alert-rules.yml
+
+            
+      volumes:
+        - name: config-volume
+          configMap:
+            name: prometheus-config
+
+        - name: alert-rules-volume
+          mountPath: /etc/prometheus/alert-rules.yml
+          subPath: alert-rules.yml

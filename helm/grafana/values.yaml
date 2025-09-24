@@ -1,0 +1,13 @@
+replicaCount: 1
+
+image:
+  repository: grafana/grafana
+  tag: "11.1.4"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 3001
+
+adminUser: admin         # safe default
+adminPassword: ""        # provided at helm install time
