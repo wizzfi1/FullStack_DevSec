@@ -1,10 +1,12 @@
 replicaCount: 1
 
+namespace: monitoring
+
 image:
-  repository: prom/alertmanager
+  repository: quay.io/prometheus/alertmanager
   tag: v0.27.0
-  # Replace with actual digest: helm install --set image.imageDigest=sha256:xxxx
-  imageDigest: ""
+  imageDigest: ""   # e.g. sha256:abcd1234 (pin image for security)
+  pullPolicy: Always
 
 service:
   type: ClusterIP
@@ -13,12 +15,26 @@ service:
 resources:
   requests:
     cpu: 100m
-    memory: 200Mi
+    memory: 128Mi
   limits:
     cpu: 500m
     memory: 512Mi
 
-# Slack integration (sensitive webhook is mounted via Secret, not here)
+securityContext:
+  pod:
+    runAsNonRoot: true
+    runAsUser: 1000
+    fsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  container:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop: ["ALL"]
+
 slack:
+  enabled: true
   channel: "#alerts"
-  webhookUrl: ""  # leave empty, passed via Secret at install
+  secretName: alertmanager-secret
+  secretKey: slackWebhookUrl

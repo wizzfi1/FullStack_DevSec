@@ -1,10 +1,12 @@
 replicaCount: 1
 
+namespace: monitoring
+
 image:
   repository: grafana/grafana
   tag: 11.1.4
-  # Replace with actual digest: helm install --set image.imageDigest=sha256:xxxx
-  imageDigest: ""
+  imageDigest: ""   # pin digest
+  pullPolicy: Always
 
 service:
   type: ClusterIP
@@ -13,11 +15,25 @@ service:
 resources:
   requests:
     cpu: 100m
-    memory: 200Mi
+    memory: 128Mi
   limits:
     cpu: 500m
-    memory: 1Gi
+    memory: 512Mi
 
-# Sensitive values (admin password injected via Secret, not committed)
-adminUser: admin
-adminPassword: ""   # set with --set adminPassword or via CI/CD secret
+securityContext:
+  pod:
+    runAsNonRoot: true
+    runAsUser: 472   # official Grafana UID
+    fsGroup: 472
+    seccompProfile:
+      type: RuntimeDefault
+  container:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop: ["ALL"]
+
+admin:
+  existingSecret: grafana-secret
+  userKey: admin-user
+  passwordKey: admin-password

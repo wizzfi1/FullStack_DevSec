@@ -1,10 +1,12 @@
 replicaCount: 1
 
+namespace: monitoring
+
 image:
   repository: prom/prometheus
   tag: v2.53.0
-  # Replace with actual digest: helm install --set image.imageDigest=sha256:xxxx
-  imageDigest: ""
+  imageDigest: ""   # pin digest
+  pullPolicy: Always
 
 service:
   type: ClusterIP
@@ -12,21 +14,25 @@ service:
 
 resources:
   requests:
-    cpu: 100m
-    memory: 200Mi
+    cpu: 200m
+    memory: 256Mi
   limits:
-    cpu: 500m
+    cpu: 1
     memory: 1Gi
 
-# Alertmanager integration
-alertmanager:
-  serviceName: alertmanager
-  servicePort: 9093
+securityContext:
+  pod:
+    runAsNonRoot: true
+    runAsUser: 1000
+    fsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  container:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop: ["ALL"]
 
-# Default scrape config (extend as needed)
-scrapeConfigs:
-  - job_name: "mydev"
-    metrics_path: /metrics
-    static_configs:
-      - targets:
-          - "mydev:3000"
+alerting:
+  alertmanagerService: alertmanager
+  alertmanagerPort: 9093
