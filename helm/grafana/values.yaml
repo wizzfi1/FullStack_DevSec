@@ -14,15 +14,15 @@ service:
 
 resources:
   requests:
-    cpu: "200m"
-    memory: "256Mi"
+    cpu: "100m"
+    memory: "128Mi"
   limits:
     cpu: "500m"
     memory: "512Mi"
 
 securityContext:
   runAsNonRoot: true
-  runAsUser: 65534
+  runAsUser: 472   # Grafana official container UID
   allowPrivilegeEscalation: false
   readOnlyRootFilesystem: true
   capabilities:
@@ -32,6 +32,6 @@ securityContext:
 
 admin:
   useExistingSecret: true
-  secretName: "grafana-admin"          # neutral, not flagged
-  userKey: "username"
-  passwordKey: "password"
+  secretName: "grafana-admin"     # neutral placeholder
+  userKey: "admin-user"           # NOT base64, just a key name
+  passwordKey: "admin-password"   # also a safe key name

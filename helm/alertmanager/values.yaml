@@ -32,5 +32,6 @@ securityContext:
 
 slack:
   useExistingSecret: true
-  secretName: "alertmanager-slack"     # neutral, not high-entropy
-  secretKey: "webhook-url"             # descriptive, not random
+  secretName: "alertmanager-slack"    # neutral, descriptive name
+  secretKey: "webhook-url"            # not base64, not entropy-like
+  # value is injected via kubectl create secret, NOT here
