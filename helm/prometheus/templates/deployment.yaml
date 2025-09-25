@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus
-  namespace: {{ .Release.Namespace }}
+  namespace: monitoring
   labels:
     app: prometheus
 spec:
@@ -15,60 +15,48 @@ spec:
       labels:
         app: prometheus
     spec:
+      serviceAccountName: prometheus-sa
+      automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1002
-        runAsGroup: 1002
-        fsGroup: 1002
-        seccompProfile:
-          type: RuntimeDefault
+        runAsUser: 1001
+        fsGroup: 1001
       containers:
         - name: prometheus
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}{{- if .Values.image.imageDigest }}@{{ .Values.image.imageDigest }}{{- end }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}@{{ .Values.image.imageDigest }}"
           imagePullPolicy: Always
           args:
             - "--config.file=/etc/prometheus/prometheus.yml"
             - "--storage.tsdb.path=/prometheus"
           ports:
-            - containerPort: 9090
-              name: web
+            - name: http
+              containerPort: 9090
           resources:
-            requests:
-              cpu: {{ .Values.resources.requests.cpu }}
-              memory: {{ .Values.resources.requests.memory }}
-            limits:
-              cpu: {{ .Values.resources.limits.cpu }}
-              memory: {{ .Values.resources.limits.memory }}
+            {{- toYaml .Values.resources | nindent 12 }}
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
               drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
           livenessProbe:
             httpGet:
               path: /-/healthy
               port: 9090
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
+            initialDelaySeconds: 15
+            periodSeconds: 20
           readinessProbe:
             httpGet:
               path: /-/ready
               port: 9090
             initialDelaySeconds: 5
             periodSeconds: 10
-            timeoutSeconds: 5
           volumeMounts:
-            - name: config
+            - name: prometheus-config
               mountPath: /etc/prometheus
               readOnly: true
-            - name: rules
-              mountPath: /etc/prometheus/rules
-              readOnly: true
       volumes:
-        - name: config
+        - name: prometheus-config
           configMap:
             name: prometheus-config
-        - name: rules
-          configMap:
-            name: prometheus-alert-rules

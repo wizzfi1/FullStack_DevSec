@@ -1,38 +1,9 @@
-# Alertmanager values.yaml
-
-replicaCount: 1
-
 image:
   repository: prom/alertmanager
   tag: v0.27.0
-  imageDigest: ""        # optional pinned digest
+  imageDigest: sha256:abcd1234ef567890... # required
   pullPolicy: Always
 
-service:
-  type: ClusterIP
-  port: 9093
-
-resources:
-  requests:
-    cpu: "100m"
-    memory: "128Mi"
-  limits:
-    cpu: "500m"
-    memory: "256Mi"
-
-securityContext:
-  runAsNonRoot: true
-  runAsUser: 1001
-  fsGroup: 1001
-  allowPrivilegeEscalation: false
-  readOnlyRootFilesystem: true
-  capabilities:
-    drop: [ "ALL" ]
-  seccompProfile:
-    type: RuntimeDefault
-
 slack:
-  enabled: true
-  useExistingSecret: true
-  secretName: alertmanager-slack
-  keyRef: slackWebhook   
+  secretName: alertmanager-secret
+  keyRef: alertmanager.yml

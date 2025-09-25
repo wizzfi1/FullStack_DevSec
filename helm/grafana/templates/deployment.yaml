@@ -23,8 +23,8 @@ spec:
         fsGroup: 1001
       containers:
         - name: grafana
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}{{ if .Values.image.imageDigest }}@{{ .Values.image.imageDigest }}{{ end }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}@{{ .Values.image.imageDigest }}"
+          imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 3000
@@ -37,17 +37,6 @@ spec:
               drop: ["ALL"]
             seccompProfile:
               type: RuntimeDefault
-          env:
-            - name: GF_SECURITY_ADMIN_USER
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.admin.secretName }}
-                  key: {{ .Values.admin.userRef }}
-            - name: GF_SECURITY_ADMIN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.admin.secretName }}
-                  key: {{ .Values.admin.passRef }}
           livenessProbe:
             httpGet:
               path: /api/health
@@ -60,3 +49,11 @@ spec:
               port: 3000
             initialDelaySeconds: 5
             periodSeconds: 10
+          volumeMounts:
+            - name: grafana-config
+              mountPath: /etc/grafana/provisioning
+              readOnly: true
+      volumes:
+        - name: grafana-config
+          secret:
+            secretName: {{ .Values.admin.existingSecret }}

@@ -1,38 +1,20 @@
-# Grafana values.yaml
-
-replicaCount: 1
-
 image:
   repository: grafana/grafana
   tag: 11.1.4
-  imageDigest: ""        # optional pinned digest
+  imageDigest: sha256:abcd1234ef567890... # required
   pullPolicy: Always
 
-service:
-  type: ClusterIP
-  port: 3000
+replicaCount: 1
+
+admin:
+  existingSecret: grafana-secret
+  userKey: admin-user
+  passKey: admin-password
 
 resources:
   requests:
     cpu: "100m"
-    memory: "256Mi"
+    memory: "128Mi"
   limits:
     cpu: "500m"
     memory: "512Mi"
-
-securityContext:
-  runAsNonRoot: true
-  runAsUser: 1001
-  fsGroup: 1001
-  allowPrivilegeEscalation: false
-  readOnlyRootFilesystem: true
-  capabilities:
-    drop: [ "ALL" ]
-  seccompProfile:
-    type: RuntimeDefault
-
-admin:
-  useExistingSecret: true
-  secretName: grafana-admin
-  userRef: adminUser     
-  passRef: adminPassword  

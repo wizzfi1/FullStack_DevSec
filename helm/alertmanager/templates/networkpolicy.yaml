@@ -1,12 +1,12 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: prometheus-network-policy
+  name: alertmanager-network-policy
   namespace: monitoring
 spec:
   podSelector:
     matchLabels:
-      app: prometheus
+      app: alertmanager
   policyTypes:
     - Ingress
     - Egress
