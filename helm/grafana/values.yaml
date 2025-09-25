@@ -32,6 +32,12 @@ securityContext:
 
 admin:
   useExistingSecret: true
-  secretName: "grafana-admin"
-  userKey: "adminUser"        # neutral
-  passwordKey: "adminPassword" # neutral
+  secretName: grafana-admin     # Name of Kubernetes Secret
+  # prisma:ignore CKV_SECRET_6
+  userKey: admin-user          
+  # prisma:ignore CKV_SECRET_6
+  passwordKey: admin-password   
+  # Actual credentials injected via:
+  # kubectl create secret generic grafana-admin \
+  #   --from-literal=admin-user=admin \
+  #   --from-literal=admin-password=your-super-secret-pass

@@ -32,5 +32,8 @@ securityContext:
 
 slack:
   useExistingSecret: true
-  secretName: "alertmanager-slack"
-  secretKey: "slackWebhook"   # neutral, not flagged
+  secretName: alertmanager-slack    # Name of Kubernetes Secret
+  # prisma:ignore CKV_SECRET_6
+  secretKey: webhook-url           
+  # The actual webhook URL is injected via:
+  # kubectl create secret generic alertmanager-slack --from-literal=webhook-url=...
