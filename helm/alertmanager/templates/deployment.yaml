@@ -2,7 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: alertmanager
-  namespace: {{ .Values.namespace }}
+  namespace: monitoring
+  labels:
+    app: alertmanager
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -13,24 +15,46 @@ spec:
       labels:
         app: alertmanager
     spec:
-      serviceAccountName: {{ .Values.serviceAccount.name }}
-      automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
+      serviceAccountName: alertmanager-sa
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
       containers:
         - name: alertmanager
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}{{ if .Values.image.digest }}@{{ .Values.image.digest }}{{ end }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}{{ if .Values.image.imageDigest }}@{{ .Values.image.imageDigest }}{{ end }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
             - "--config.file=/etc/alertmanager/alertmanager.yml"
             - "--storage.path=/alertmanager"
           ports:
-            - containerPort: {{ .Values.service.port }}
-          securityContext: {{- toYaml .Values.securityContext | nindent 12 }}
+            - name: http
+              containerPort: 9093
           resources:
-{{ toYaml .Values.resources | indent 12 }}
-          volumeMounts:
-            - name: config
-              mountPath: /etc/alertmanager
-      volumes:
-        - name: config
-          secret:
-            secretName: {{ .Values.alertmanagerConfig.existingSecret }}
+            {{- toYaml .Values.resources | nindent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+          env:
+            - name: SLACK_WEBHOOK_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.slack.secretName }}
+                  key: {{ .Values.slack.keyRef }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 9093
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 9093
+            initialDelaySeconds: 5
+            periodSeconds: 10

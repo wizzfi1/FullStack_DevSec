@@ -1,11 +1,11 @@
-namespace: monitoring
+# Alertmanager values.yaml
 
 replicaCount: 1
 
 image:
   repository: prom/alertmanager
   tag: v0.27.0
-  digest: "" # override with immutable digest if desired
+  imageDigest: ""        # optional pinned digest
   pullPolicy: Always
 
 service:
@@ -22,18 +22,17 @@ resources:
 
 securityContext:
   runAsNonRoot: true
-  runAsUser: 65534
+  runAsUser: 1001
+  fsGroup: 1001
   allowPrivilegeEscalation: false
   readOnlyRootFilesystem: true
   capabilities:
-    drop: ["ALL"]
+    drop: [ "ALL" ]
   seccompProfile:
     type: RuntimeDefault
 
 slack:
+  enabled: true
   useExistingSecret: true
-  secretName: alertmanager-slack    # Name of Kubernetes Secret
-  # prisma:ignore CKV_SECRET_6
-  secretKey: webhookurl           
-  # The actual webhook URL is injected via:
-  # kubectl create secret generic alertmanager-slack --from-literal=webhook-url=...
+  secretName: alertmanager-slack
+  keyRef: slackWebhook   
