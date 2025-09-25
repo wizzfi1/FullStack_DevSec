@@ -2,8 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: alertmanager
+  namespace: {{ .Values.namespace | default "monitoring" }}
+  labels:
+    app: alertmanager
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.replicaCount | default 1 }}
   selector:
     matchLabels:
       app: alertmanager
@@ -12,23 +15,49 @@ spec:
       labels:
         app: alertmanager
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: alertmanager
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.image.repository }}@{{ .Values.image.digest }}"
+          imagePullPolicy: Always
           args:
             - "--config.file=/etc/alertmanager/alertmanager.yml"
+            - "--storage.path=/alertmanager"
           ports:
             - containerPort: 9093
-          env:
-            - name: SLACK_WEBHOOK_URL
-              valueFrom:
-                secretKeyRef:
-                  name: alertmanager-secret
-                  key: slack-webhook
+          livenessProbe:
+            httpGet:
+              path: /-/healthy
+              port: 9093
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /-/ready
+              port: 9093
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
-            - name: config-volume
+            - name: config
               mountPath: /etc/alertmanager
+            - name: slack-secret
+              mountPath: /etc/alertmanager/secrets
+              readOnly: true
       volumes:
-        - name: config-volume
+        - name: config
           configMap:
             name: alertmanager-config
+        - name: slack-secret
+          secret:
+            secretName: alertmanager-secret
