@@ -5,7 +5,7 @@ replicaCount: 1
 image:
   repository: grafana/grafana
   tag: 11.1.4
-  digest: "" # override with immutable digest if desired
+  digest: ""
   pullPolicy: Always
 
 service:
@@ -22,7 +22,7 @@ resources:
 
 securityContext:
   runAsNonRoot: true
-  runAsUser: 472   # Grafana official container UID
+  runAsUser: 472
   allowPrivilegeEscalation: false
   readOnlyRootFilesystem: true
   capabilities:
@@ -32,6 +32,12 @@ securityContext:
 
 admin:
   useExistingSecret: true
-  secretName: "grafana-admin"     # neutral placeholder
-  userKey: "admin-user"           # NOT base64, just a key name
-  passwordKey: "admin-password"   # also a safe key name
+  secretName: "grafana-admin"     # Name of Kubernetes Secret
+  # prisma:ignore CKV_SECRET_6
+  userKey: "admin-user"           # Key inside secret — NOT the value
+  # prisma:ignore CKV_SECRET_6
+  passwordKey: "admin-password"   # Key inside secret — NOT the value
+  # Actual credentials injected via:
+  # kubectl create secret generic grafana-admin \
+  #   --from-literal=admin-user=admin \
+  #   --from-literal=admin-password=your-super-secret-pass
