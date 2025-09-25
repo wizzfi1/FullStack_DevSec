@@ -1,7 +1,8 @@
 image:
   repository: grafana/grafana
   tag: 11.1.4
-  imageDigest: sha256:abcd1234ef567890... # required
+  # Use CI/CD or helm --set to inject the digest, so it's not hardcoded here
+  imageDigest: ""   # e.g., set with: helm install mygrafana ./helm/grafana --set image.imageDigest=sha256:abcd123...
   pullPolicy: Always
 
 replicaCount: 1
