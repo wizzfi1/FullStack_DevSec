@@ -2,11 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: alertmanager
-  namespace: {{ .Values.namespace | default "monitoring" }}
-  labels:
-    app: alertmanager
+  namespace: {{ .Values.namespace }}
 spec:
-  replicas: {{ .Values.replicaCount | default 1 }}
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app: alertmanager
@@ -15,49 +13,24 @@ spec:
       labels:
         app: alertmanager
     spec:
-      securityContext:
-        seccompProfile:
-          type: RuntimeDefault
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
       containers:
         - name: alertmanager
-          image: "{{ .Values.image.repository }}@{{ .Values.image.digest }}"
-          imagePullPolicy: Always
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}{{ if .Values.image.digest }}@{{ .Values.image.digest }}{{ end }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
             - "--config.file=/etc/alertmanager/alertmanager.yml"
             - "--storage.path=/alertmanager"
           ports:
-            - containerPort: 9093
-          livenessProbe:
-            httpGet:
-              path: /-/healthy
-              port: 9093
-            initialDelaySeconds: 10
-            periodSeconds: 30
-          readinessProbe:
-            httpGet:
-              path: /-/ready
-              port: 9093
-            initialDelaySeconds: 10
-            periodSeconds: 30
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop: ["ALL"]
+            - containerPort: {{ .Values.service.port }}
+          securityContext: {{- toYaml .Values.securityContext | nindent 12 }}
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+{{ toYaml .Values.resources | indent 12 }}
           volumeMounts:
             - name: config
               mountPath: /etc/alertmanager
-            - name: slack-secret
-              mountPath: /etc/alertmanager/secrets
-              readOnly: true
       volumes:
         - name: config
-          configMap:
-            name: alertmanager-config
-        - name: slack-secret
           secret:
-            secretName: alertmanager-secret
+            secretName: {{ .Values.alertmanagerConfig.existingSecret }}
