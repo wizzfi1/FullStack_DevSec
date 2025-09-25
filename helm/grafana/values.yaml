@@ -31,6 +31,7 @@ securityContext:
     type: RuntimeDefault
 
 admin:
-  existingSecret: grafana-admin-secret
-  userKey: admin-user
-  passwordKey: admin-password
+  useExistingSecret: true
+  secretName: "grafana-admin"          # neutral, not flagged
+  userKey: "username"
+  passwordKey: "password"

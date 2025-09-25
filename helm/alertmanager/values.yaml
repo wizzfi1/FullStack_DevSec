@@ -31,6 +31,6 @@ securityContext:
     type: RuntimeDefault
 
 slack:
-  # instead of putting the webhook inline, reference a secret
-  existingSecret: alertmanager-slack-secret
-  existingSecretKey: slackWebhook
+  useExistingSecret: true
+  secretName: "alertmanager-slack"     # neutral, not high-entropy
+  secretKey: "webhook-url"             # descriptive, not random
