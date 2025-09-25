@@ -1,8 +1,19 @@
 image:
   repository: prom/alertmanager
   tag: v0.27.0
-  imageDigest: sha256:abcd1234ef567890... # required
+  imageDigest: sha256:abcd1234ef567890... # replace with actual digest
   pullPolicy: Always
+
+replicaCount: 1
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+
 
 slack:
   secretName: alertmanager-secret

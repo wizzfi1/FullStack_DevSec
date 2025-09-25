@@ -32,23 +32,30 @@ spec:
             - name: http
               containerPort: 9093
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
               drop: ["ALL"]
+            runAsNonRoot: true
+            runAsUser: 1001
             seccompProfile:
               type: RuntimeDefault
           livenessProbe:
             httpGet:
-              path: /
+              path: /-/healthy
               port: 9093
             initialDelaySeconds: 15
             periodSeconds: 20
           readinessProbe:
             httpGet:
-              path: /
+              path: /-/ready
               port: 9093
             initialDelaySeconds: 5
             periodSeconds: 10
@@ -58,5 +65,5 @@ spec:
               readOnly: true
       volumes:
         - name: alertmanager-config
-          secret:
-            secretName: {{ .Values.slack.secretName }}
+          configMap:
+            name: alertmanager-config
