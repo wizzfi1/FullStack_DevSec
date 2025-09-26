@@ -7,7 +7,7 @@ admin:
 image:
   repository: grafana/grafana
   tag: 11.1.4
-  imageDigest: ""   # inject at deploy time (helm --set image.imageDigest=sha256:...)
+  imageDigest: ""   # inject at deploy time (e.g., helm --set image.imageDigest=sha256:...)
   pullPolicy: Always
 
 replicaCount: 1

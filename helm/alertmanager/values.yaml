@@ -6,7 +6,7 @@ slack:
 image:
   repository: prom/alertmanager
   tag: v0.27.0
-  imageDigest: ""   # inject at deploy
+  imageDigest: ""   # inject at deploy time
   pullPolicy: Always
 
 replicaCount: 1
