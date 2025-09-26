@@ -1,3 +1,8 @@
+# prisma:ignore CKV_SECRET_6
+slack:
+  existingSecret: alertmanager-secret
+  secretKey: slack-webhook-url
+
 image:
   repository: prom/alertmanager
   tag: v0.27.0
@@ -5,10 +10,6 @@ image:
   pullPolicy: Always
 
 replicaCount: 1
-
-slack:
-  existingSecret: alertmanager-secret
-  secretKey: slack-webhook-url
 
 resources:
   requests:

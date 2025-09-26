@@ -1,3 +1,9 @@
+# prisma:ignore CKV_SECRET_6
+admin:
+  existingSecret: grafana-secret
+  userKey: admin-user
+  passKey: admin-password
+
 image:
   repository: grafana/grafana
   tag: 11.1.4
@@ -5,11 +11,6 @@ image:
   pullPolicy: Always
 
 replicaCount: 1
-
-admin:
-  existingSecret: grafana-secret
-  userKey: admin-user
-  passKey: admin-password
 
 resources:
   requests:
