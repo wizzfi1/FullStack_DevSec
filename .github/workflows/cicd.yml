@@ -173,3 +173,15 @@ jobs:
             Commit: ${{ github.sha }}
             Status: ${{ job.status }}
             Environment: Production
+
+
+      - name: Debug Directory Structure
+        run: |
+          echo "Current directory:"
+          pwd
+          echo "Directory contents:"
+          ls -la
+          echo "Infra contents:"
+          ls -la infra/ || echo "No infra directory"
+          echo "Helm contents:"
+          ls -la helm/ || echo "No helm directory"
