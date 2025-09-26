@@ -33,17 +33,11 @@ jobs:
       - name: Dependency Audit
         run: npm audit --audit-level=high
 
-      # --- IaC Security Scans — ONLY SCAN INFRASTRUCTURE ---
+      # --- IaC Security Scans — FIXED CHECKOV SYNTAX ---
       - name: Checkov Scan (IaC security)
-        uses: bridgecrewio/checkov-action@v12
-        with:
-          directory: |
-            infra/
-            helm/
-          skip_check: CKV_SECRET_6
-          check: CKV_K8S_*
-          output_format: sarif
-          output_file_path: checkov.sarif
+        run: |
+          pip install checkov
+          checkov -d infra/ -d helm/ --check "CKV_K8S_*" --skip-check CKV_SECRET_6 --output sarif --output-file-path checkov.sarif
 
       - name: Upload Checkov SARIF results
         uses: github/codeql-action/upload-sarif@v3
@@ -173,7 +167,6 @@ jobs:
             Commit: ${{ github.sha }}
             Status: ${{ job.status }}
             Environment: Production
-
 
       - name: Debug Directory Structure
         run: |
