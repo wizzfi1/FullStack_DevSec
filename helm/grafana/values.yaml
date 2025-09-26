@@ -1,16 +1,15 @@
 image:
   repository: grafana/grafana
   tag: 11.1.4
-  # Use CI/CD or helm --set to inject the digest, so it's not hardcoded here
-  imageDigest: ""   # e.g., set with: helm install mygrafana ./helm/grafana --set image.imageDigest=sha256:abcd123...
+  imageDigest: ""   # inject at deploy time
   pullPolicy: Always
 
 replicaCount: 1
 
 admin:
-  existingSecret: grafana-secret
-  userKey: admin-user
-  passKey: admin-password
+  existingSecret: ""      # inject with --set admin.existingSecret=grafana-secret
+  userKey: ""             # inject with --set admin.userKey=admin-user
+  passKey: ""             # inject with --set admin.passKey=admin-password
 
 resources:
   requests:
