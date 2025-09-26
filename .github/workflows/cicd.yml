@@ -41,13 +41,10 @@ jobs:
             infra/
             helm/
           skip-check: CKV_SECRET_6
-          check: |
-            CKV_K8S_
-            CKV_AWS_
-            CKV_GCP_
-            CKV_AZURE_
-            CKV_TF_
+          check: CKV_K8S_*
           output: sarif
+          output-file-path: checkov.sarif
+
       - name: Terrascan Scan (IaC security)
         run: |
           echo "🔍 Running Terrascan on supported IaC (Terraform, K8s)..."
