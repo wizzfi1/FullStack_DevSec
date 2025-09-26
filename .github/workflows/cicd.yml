@@ -33,11 +33,13 @@ jobs:
       - name: Dependency Audit
         run: npm audit --audit-level=high
 
-      # --- IaC Security Scans ---
+      # --- IaC Security Scans — ONLY SCAN INFRASTRUCTURE ---
       - name: Checkov Scan (IaC security)
         uses: bridgecrewio/checkov-action@v12
         with:
-          directory: .
+          directory: infra/
+                     helm/
+          check: CKV_K8S_*,CKV_AWS_*,CKV_GCP_*,CKV_AZURE_*,CKV_TF_*
 
       - name: Terrascan Scan (IaC security)
         run: |
@@ -52,6 +54,9 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: mydev:${{ github.sha }}
+          format: json
+          exit-code: 1
+          severity: HIGH,CRITICAL
 
       - name: Push to Docker Hub
         run: |

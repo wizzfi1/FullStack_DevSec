@@ -1,7 +1,7 @@
 image:
   repository: prom/prometheus
   tag: v2.53.0
-  imageDigest: sha256:abcd1234ef567890... # required
+  imageDigest: sha256:abcd1234ef567890... # Immutable digest — required for compliance
   pullPolicy: Always
 
 replicaCount: 1
@@ -13,3 +13,25 @@ resources:
   limits:
     cpu: "1"
     memory: "1Gi"
+
+# SECURITY CONTEXT — POD LEVEL (for pod-wide settings)
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 65534
+  runAsGroup: 65534
+  fsGroup: 65534
+  seccompProfile:
+    type: RuntimeDefault
+
+# SECURITY CONTEXT — CONTAINER LEVEL (critical for CKV_K8S_* policies)
+containerSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 65534
+  runAsGroup: 65534
+  fsGroup: 65534
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop: ["ALL"]
+  seccompProfile:
+    type: RuntimeDefault

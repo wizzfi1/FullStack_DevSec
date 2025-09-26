@@ -16,6 +16,7 @@
      pkgs.docker-client
      pkgs.openssh
      pkgs.k3s
+     pkgs.checkov
      pkgs.kubectl
      pkgs.tenv
      pkgs.docker-compose
