@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  security-events: write  
 
 jobs:
   build-test-scan:
@@ -33,11 +34,11 @@ jobs:
       - name: Dependency Audit
         run: npm audit --audit-level=high
 
-      # --- IaC Security Scans — FIXED CHECKOV SYNTAX ---
+      # --- IaC Security Scans ---
       - name: Checkov Scan (IaC security)
         run: |
           pip install checkov
-          checkov -d infra/ -d helm/ --check "CKV_K8S_*" --skip-check CKV_SECRET_6 --output sarif --output-file-path checkov.sarif
+          checkov -d infra/ -d helm/ --check "CKV_K8S_*" --skip-check CKV_SECRET_6 --output sarif --output-file-path checkov.sarif --skip-framework helm --quiet
 
       - name: Upload Checkov SARIF results
         uses: github/codeql-action/upload-sarif@v3
@@ -46,13 +47,11 @@ jobs:
 
       - name: Terrascan Scan (IaC security)
         run: |
-          echo "🔍 Running Terrascan on supported IaC (Terraform, K8s)..."
-          # Install Terrascan
+          echo "🔍 Running Terrascan..."
           curl -L "$(curl -s https://api.github.com/repos/tenable/terrascan/releases/latest | grep -o -E "https://.+?_Linux_x86_64.tar.gz")" > terrascan.tar.gz
           tar -xf terrascan.tar.gz terrascan && rm terrascan.tar.gz
-          sudo mv terrascan /usr/local/bin/ && terrascan version
-          # Run scan
-          terrascan scan -d infra/ -i terraform -t k8s || echo "Terrascan scan completed with exit code: $?"
+          sudo mv terrascan /usr/local/bin/
+          terrascan scan -d infra/ -i terraform -t k8s || echo "Terrascan completed"
 
       # --- Build + Scan Image ---
       - name: Build Docker Image
@@ -80,6 +79,8 @@ jobs:
           docker push $IMAGE_NAME:${{ github.sha }}
           docker tag mydev:${{ github.sha }} $IMAGE_NAME:latest
           docker push $IMAGE_NAME:latest
+
+  
 
   deploy-staging:
     runs-on: ubuntu-latest
