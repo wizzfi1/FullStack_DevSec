@@ -1,16 +1,22 @@
-# prisma:ignore CKV_SECRET_6
 admin:
   existingSecret: grafana-secret
   userKey: admin-user
-  passKey: admin-password
+  passwordKey: admin-password
 
 image:
   repository: grafana/grafana
-  tag: 11.1.4
-  imageDigest: ""   # inject at deploy time (e.g., helm --set image.imageDigest=sha256:...)
-  pullPolicy: Always
+  tag: "11.1.4"
+  pullPolicy: IfNotPresent
 
 replicaCount: 1
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+ingress:
+  enabled: false
 
 resources:
   requests:
@@ -27,3 +33,6 @@ securityContext:
   runAsNonRoot: true
   seccompProfile:
     type: RuntimeDefault
+
+persistence:
+  enabled: false

@@ -2,30 +2,25 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: prometheus-alert-rules
-  namespace: {{ .Release.Namespace }}
 data:
   alert-rules.yml: |
     groups:
-      - name: system-alerts
-        interval: 30s
-        rules:
-          - alert: HighCPUUsage
-            expr: 100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 80
-            for: 2m
-            labels:
-              severity: warning
-            annotations:
-              summary: "High CPU usage on {{ $labels.instance }}"
-              description: "CPU usage greater than 80% for 2m."
-
-      - name: app-alerts
-        interval: 30s
-        rules:
-          - alert: HighErrorRate
-            expr: rate(http_requests_total{status=~"5.."}[5m]) / max(rate(http_requests_total[5m]), 1) > 0.05
-            for: 5m
-            labels:
-              severity: critical
-            annotations:
-              summary: "High 5xx error rate"
-              description: "More than 5% 5xx errors over 5m."
+    - name: system-alerts
+      rules:
+      - alert: HighCPUUsage
+        expr: 100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is above 80% for more than 5 minutes"
+      
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 90
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is above 90% for more than 5 minutes"
