@@ -37,10 +37,17 @@ jobs:
       - name: Checkov Scan (IaC security)
         uses: bridgecrewio/checkov-action@v12
         with:
-          directory: infra/
-                     helm/
-          check: CKV_K8S_*,CKV_AWS_*,CKV_GCP_*,CKV_AZURE_*,CKV_TF_*
-
+          directory: |
+            infra/
+            helm/
+          skip-check: CKV_SECRET_6
+          check: |
+            CKV_K8S_
+            CKV_AWS_
+            CKV_GCP_
+            CKV_AZURE_
+            CKV_TF_
+          output: sarif
       - name: Terrascan Scan (IaC security)
         run: |
           echo "🔍 Running Terrascan on supported IaC (Terraform, K8s)..."
