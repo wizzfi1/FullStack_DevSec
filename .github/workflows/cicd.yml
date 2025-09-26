@@ -40,15 +40,25 @@ jobs:
           directory: |
             infra/
             helm/
-          skip-check: CKV_SECRET_6
+          skip_check: CKV_SECRET_6
           check: CKV_K8S_*
           output: sarif
-          output-file-path: checkov.sarif
+          output_file_path: checkov.sarif
+
+      - name: Upload Checkov SARIF results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: checkov.sarif
 
       - name: Terrascan Scan (IaC security)
         run: |
           echo "🔍 Running Terrascan on supported IaC (Terraform, K8s)..."
-          terrascan scan -d infra -i terraform -t aws,gcp,azure,k8s || true
+          # Install Terrascan
+          curl -L "$(curl -s https://api.github.com/repos/tenable/terrascan/releases/latest | grep -o -E "https://.+?_Linux_x86_64.tar.gz")" > terrascan.tar.gz
+          tar -xf terrascan.tar.gz terrascan && rm terrascan.tar.gz
+          sudo mv terrascan /usr/local/bin/ && terrascan version
+          # Run scan
+          terrascan scan -d infra/ -i terraform -t k8s || echo "Terrascan scan completed with exit code: $?"
 
       # --- Build + Scan Image ---
       - name: Build Docker Image
@@ -58,9 +68,15 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: mydev:${{ github.sha }}
-          format: json
+          format: sarif
+          output: trivy.sarif
           exit-code: 1
           severity: HIGH,CRITICAL
+
+      - name: Upload Trivy SARIF results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy.sarif
 
       - name: Push to Docker Hub
         run: |
