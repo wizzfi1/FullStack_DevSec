@@ -3,8 +3,6 @@ kind: Deployment
 metadata:
   name: alertmanager
   namespace: monitoring
-  labels:
-    app: alertmanager
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -15,55 +13,38 @@ spec:
       labels:
         app: alertmanager
     spec:
-      serviceAccountName: alertmanager-sa
       automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1001
-        fsGroup: 1001
       containers:
         - name: alertmanager
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}@{{ .Values.image.imageDigest }}"
-          imagePullPolicy: Always
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
             - "--config.file=/etc/alertmanager/alertmanager.yml"
-            - "--storage.path=/alertmanager"
-          ports:
-            - name: http
-              containerPort: 9093
-          resources:
-            requests:
-              cpu: {{ .Values.resources.requests.cpu }}
-              memory: {{ .Values.resources.requests.memory }}
-            limits:
-              cpu: {{ .Values.resources.limits.cpu }}
-              memory: {{ .Values.resources.limits.memory }}
-          securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop: ["ALL"]
-            runAsNonRoot: true
-            runAsUser: 1001
-            seccompProfile:
-              type: RuntimeDefault
+          resources: {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: alertmanager-config-vol
+              mountPath: /etc/alertmanager
+            - name: alertmanager-secret-vol
+              mountPath: /etc/secrets/alertmanager
+              readOnly: true
           livenessProbe:
             httpGet:
               path: /-/healthy
               port: 9093
-            initialDelaySeconds: 15
-            periodSeconds: 20
+            initialDelaySeconds: 30
+            periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /-/ready
               port: 9093
             initialDelaySeconds: 5
             periodSeconds: 10
-          volumeMounts:
-            - name: alertmanager-config
-              mountPath: /etc/alertmanager
-              readOnly: true
       volumes:
-        - name: alertmanager-config
+        - name: alertmanager-config-vol
           configMap:
             name: alertmanager-config
+        - name: alertmanager-secret-vol
+          secret:
+            secretName: {{ .Values.slack.existingSecret }}

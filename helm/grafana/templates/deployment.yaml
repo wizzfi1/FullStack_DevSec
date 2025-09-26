@@ -3,8 +3,6 @@ kind: Deployment
 metadata:
   name: grafana
   namespace: monitoring
-  labels:
-    app: grafana
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -15,45 +13,31 @@ spec:
       labels:
         app: grafana
     spec:
-      serviceAccountName: grafana-sa
-      automountServiceAccountToken: false
+      serviceAccountName: grafana
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1001
-        fsGroup: 1001
       containers:
         - name: grafana
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}@{{ .Values.image.imageDigest }}"
-          imagePullPolicy: Always
-          ports:
-            - name: http
-              containerPort: 3000
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-          securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop: ["ALL"]
-            seccompProfile:
-              type: RuntimeDefault
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          resources: {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: grafana-secret-vol
+              mountPath: /etc/secrets/grafana
+              readOnly: true
           livenessProbe:
             httpGet:
               path: /api/health
               port: 3000
-            initialDelaySeconds: 15
-            periodSeconds: 20
+            initialDelaySeconds: 30
+            periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /api/health
               port: 3000
             initialDelaySeconds: 5
             periodSeconds: 10
-          volumeMounts:
-            - name: grafana-config
-              mountPath: /etc/grafana/provisioning
-              readOnly: true
       volumes:
-        - name: grafana-config
+        - name: grafana-secret-vol
           secret:
             secretName: {{ .Values.admin.existingSecret }}

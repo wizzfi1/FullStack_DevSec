@@ -1,15 +1,14 @@
 image:
   repository: prom/alertmanager
   tag: v0.27.0
-  imageDigest: ""   # inject digest at deploy time
+  imageDigest: ""   # inject at deploy
   pullPolicy: Always
 
 replicaCount: 1
 
 slack:
-  enabled: true
-  existingSecret: ""       # inject with --set slack.existingSecret=alertmanager-secret
-  secretKey: ""            # inject with --set slack.secretKey=slack-webhook-url
+  existingSecret: alertmanager-secret
+  secretKey: slack-webhook-url
 
 resources:
   requests:
@@ -24,5 +23,5 @@ securityContext:
   runAsGroup: 1001
   fsGroup: 1001
   runAsNonRoot: true
-  allowPrivilegeEscalation: false
-  readOnlyRootFilesystem: true
+  seccompProfile:
+    type: RuntimeDefault

@@ -1,15 +1,15 @@
 image:
   repository: grafana/grafana
   tag: 11.1.4
-  imageDigest: ""   # inject at deploy time
+  imageDigest: ""   # inject at deploy time (helm --set image.imageDigest=sha256:...)
   pullPolicy: Always
 
 replicaCount: 1
 
 admin:
-  existingSecret: ""      # inject with --set admin.existingSecret=grafana-secret
-  userKey: ""             # inject with --set admin.userKey=admin-user
-  passKey: ""             # inject with --set admin.passKey=admin-password
+  existingSecret: grafana-secret
+  userKey: admin-user
+  passKey: admin-password
 
 resources:
   requests:
@@ -18,3 +18,11 @@ resources:
   limits:
     cpu: "500m"
     memory: "512Mi"
+
+securityContext:
+  runAsUser: 1001
+  runAsGroup: 1001
+  fsGroup: 1001
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
