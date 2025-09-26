@@ -42,7 +42,7 @@ jobs:
             helm/
           skip_check: CKV_SECRET_6
           check: CKV_K8S_*
-          output: sarif
+          output_format: sarif
           output_file_path: checkov.sarif
 
       - name: Upload Checkov SARIF results
