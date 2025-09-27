@@ -1,9 +1,9 @@
-FROM grafana/grafana:11.1.4
+FROM grafana/grafana:11.3.4  # ← Update to latest patch version
 
 COPY provisioning /etc/grafana/provisioning
 
 # Grafana already runs as grafana user internally, enforce non-root
-USER grafana
+USER 472:472  # ← Use explicit UID for Grafana
 
 EXPOSE 3000
 

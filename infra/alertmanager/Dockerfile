@@ -1,4 +1,4 @@
-FROM alpine:3.20
+FROM alpine:3.21.4  # ← Update to latest Alpine
 
 RUN apk add --no-cache gettext curl tar wget
 
@@ -12,8 +12,8 @@ RUN curl -L "https://github.com/prometheus/alertmanager/releases/download/v${ALE
 COPY --chmod=755 entrypoint.sh /entrypoint.sh
 COPY alertmanager.yml.tmpl /etc/alertmanager/alertmanager.yml.tmpl
 
-# Create non-root user
-RUN addgroup -S alert && adduser -S alert -G alert
+# Create non-root user with high UID
+RUN addgroup -g 1001 -S alert && adduser -S alert -u 1001 -G alert
 USER alert
 
 EXPOSE 9093
