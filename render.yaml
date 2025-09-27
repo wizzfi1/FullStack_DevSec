@@ -32,11 +32,24 @@ services:
         sync: false   
 
   - type: web
+    name: alertmanager
+    env: docker
+    plan: free
+    rootDir: ./infra/alertmanager
+    dockerfilePath: Dockerfile
+    autoDeploy: false
+    envVars:
+      - key: SLACK_WEBHOOK_URL
+        sync: false   # set in Render dashboard
+      - key: PORT
+        value: 9093   # Alertmanager default port
+
+  - type: web
     name: prometheus
     env: docker
     plan: free
     rootDir: ./infra/prometheus
-    dockerfilePath: Dockerfile   
+    dockerfilePath: Dockerfile
     autoDeploy: false
     envVars:
       - key: PORT

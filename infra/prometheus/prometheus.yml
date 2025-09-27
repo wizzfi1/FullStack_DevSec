@@ -2,6 +2,16 @@ global:
   scrape_interval: 15s
   evaluation_interval: 15s
 
+# Tell Prometheus where Alertmanager is running
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - "alertmanager:9093"   # internal container name if same network
+
+rule_files:
+  - "alert-rules.yml"
+
 scrape_configs:
   - job_name: "mydev"
     metrics_path: /metrics

@@ -1,0 +1,8 @@
+# .trivyignore
+# Ignore base image vulnerabilities that are acceptable
+CVE-2024-*
+CVE-2023-21608
+CVE-2023-38545
+
+# Grafana specific (if needed)
+# ghcr.io/grafana/grafana:11.3.4

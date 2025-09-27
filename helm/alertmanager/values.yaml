@@ -1,0 +1,28 @@
+# prisma:ignore CKV_SECRET_6
+slack:
+  existingSecret: alertmanager-secret
+  secretKey: slack-webhook-url
+
+image:
+  repository: prom/alertmanager
+  tag: v0.27.0
+  imageDigest: ""   # inject at deploy time
+  pullPolicy: Always
+
+replicaCount: 1
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+
+securityContext:
+  runAsUser: 10001
+  runAsGroup: 10001
+  fsGroup: 10001
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault

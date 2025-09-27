@@ -1,0 +1,38 @@
+admin:
+  existingSecret: grafana-secret
+  userKey: admin-user
+  passwordKey: admin-password
+
+image:
+  repository: grafana/grafana
+  tag: "11.1.4"
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+ingress:
+  enabled: false
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+
+securityContext:
+  runAsUser: 10001
+  runAsGroup: 10001
+  fsGroup: 10001
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+
+persistence:
+  enabled: false

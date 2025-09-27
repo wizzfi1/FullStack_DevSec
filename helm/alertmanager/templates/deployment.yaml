@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alertmanager
+  namespace: monitoring
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: alertmanager
+  template:
+    metadata:
+      labels:
+        app: alertmanager
+    spec:
+      automountServiceAccountToken: false
+      # Pod-level context — only for pod-wide settings
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: alertmanager
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}@{{ .Values.image.imageDigest }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - "--config.file=/etc/alertmanager/alertmanager.yml"
+          resources: {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: alertmanager-config-vol
+              mountPath: /etc/alertmanager
+            - name: alertmanager-secret-vol
+              mountPath: /etc/secrets/alertmanager
+              readOnly: true
+          # CONTAINER-LEVEL SECURITY CONTEXT — THIS IS WHAT MATTERS
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            fsGroup: 10001
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+          livenessProbe:
+            httpGet:
+              path: /-/healthy
+              port: 9093
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /-/ready
+              port: 9093
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      volumes:
+        - name: alertmanager-config-vol
+          configMap:
+            name: alertmanager-config
+        - name: alertmanager-secret-vol
+          secret:
+            secretName: {{ .Values.slack.existingSecret }}

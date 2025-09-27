@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Alertmanager Values",
+  "type": "object",
+  "properties": {
+    "replicaCount": { "type": "integer", "minimum": 1 },
+    "image": {
+      "type": "object",
+      "properties": {
+        "repository": { "type": "string" },
+        "tag": { "type": "string" },
+        "imageDigest": { "type": "string" },
+        "pullPolicy": { "type": "string", "enum": ["Always", "IfNotPresent", "Never"] }
+      },
+      "required": ["repository", "tag"]
+    },
+    "resources": { "type": "object" },
+    "slack": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "useExistingSecret": { "type": "boolean" },
+        "secretName": { "type": "string" },
+        "keyRef": { "type": "string" }
+      },
+      "required": ["secretName", "keyRef"]
+    }
+  }
+}

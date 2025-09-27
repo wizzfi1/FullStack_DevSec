@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: monitoring
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+      evaluation_interval: 15s
+
+    alerting:
+      alertmanagers:
+        - static_configs:
+            - targets: ["{{ .Values.alertmanager.serviceName }}:{{ .Values.alertmanager.servicePort }}"]
+
+    rule_files:
+      - /etc/prometheus/rules/alert-rules.yml
+
+    scrape_configs:
+{{ toYaml .Values.scrapeConfigs | indent 6 }}

@@ -1,0 +1,54 @@
+service:
+  type: ClusterIP
+  port: 9090
+
+alertmanager:
+  serviceName: alertmanager
+  servicePort: 9093
+
+scrapeConfigs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+
+image:
+  repository: prom/prometheus
+  tag: v2.53.0
+  imageDigest: sha256:abcd1234ef567890... # Immutable digest — required for compliance
+  pullPolicy: Always
+
+replicaCount: 1
+
+resources:
+  requests:
+    cpu: "200m"
+    memory: "256Mi"
+  limits:
+    cpu: "1"
+    memory: "1Gi"
+
+# SECURITY CONTEXT — POD LEVEL (for pod-wide settings)
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  runAsGroup: 10001
+  fsGroup: 10001
+  seccompProfile:
+    type: RuntimeDefault
+
+# SECURITY CONTEXT — CONTAINER LEVEL (critical for CKV_K8S_* policies)
+containerSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  runAsGroup: 10001
+  fsGroup: 10001
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop: ["ALL"]
+  seccompProfile:
+    type: RuntimeDefault

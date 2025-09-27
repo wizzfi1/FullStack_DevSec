@@ -17,6 +17,7 @@
   "dependencies": {
     "@sentry/node": "^7.120.4",
     "@sentry/tracing": "^7.120.4",
+    "axios": "^1.12.2",
     "express": "^4.21.2",
     "prom-client": "^15.1.3"
   },
