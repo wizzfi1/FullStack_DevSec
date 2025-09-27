@@ -8,7 +8,7 @@ on:
 
 permissions:
   contents: read
-  security-events: write  
+  security-events: write
 
 jobs:
   build-test-scan:
@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # ← Crucial for Sentry and Checkov to see full history
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -38,7 +40,12 @@ jobs:
       - name: Checkov Scan (IaC security)
         run: |
           pip install checkov
-          checkov -d infra/ -d helm/ --check "CKV_K8S_*" --skip-check CKV_SECRET_6 --output sarif --output-file-path checkov.sarif --skip-framework helm --quiet
+          checkov -d infra/ -d helm/ \
+            --check "CKV_K8S_*" \
+            --skip-check CKV_SECRET_6 \
+            --output sarif \
+            --output-file-path checkov.sarif \
+            --quiet
 
       - name: Upload Checkov SARIF results
         uses: github/codeql-action/upload-sarif@v3
@@ -75,10 +82,10 @@ jobs:
       - name: Trivy Scan SARIF (Main App Only)
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: mydev:${{ github.sha }}  # Only scan main app for SARIF
+          image-ref: mydev:${{ github.sha }}
           format: sarif
           output: trivy.sarif
-          exit-code: 0  # Temporary: allow pipeline to continue
+          exit-code: 0
           severity: HIGH,CRITICAL
           ignore-unfixed: true
           skip-version-check: true
@@ -97,8 +104,6 @@ jobs:
           docker push $IMAGE_NAME:${{ github.sha }}
           docker tag mydev:${{ github.sha }} $IMAGE_NAME:latest
           docker push $IMAGE_NAME:latest
-
-  
 
   deploy-staging:
     runs-on: ubuntu-latest
@@ -125,6 +130,7 @@ jobs:
           environment: staging
           version: ${{ github.sha }}
           set_commits: auto
+          extra_args: --ignore-missing  # ← Fix: Skip missing previous release
 
   deploy-prod:
     runs-on: ubuntu-latest
@@ -151,6 +157,7 @@ jobs:
           environment: production
           version: ${{ github.sha }}
           set_commits: auto
+          extra_args: --ignore-missing  # ← Fix: Skip missing previous release
 
   notify:
     runs-on: ubuntu-latest
