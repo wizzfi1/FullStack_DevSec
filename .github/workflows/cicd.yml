@@ -57,9 +57,9 @@ jobs:
       - name: Build Docker Images
         run: |
           docker build -t mydev:${{ github.sha }} .
-          docker build -t mydev-alertmanager:${{ github.sha }} ./alertmanager
-          docker build -t mydev-grafana:${{ github.sha }} ./grafana
-          docker build -t mydev-prometheus:${{ github.sha }} ./prometheus
+          docker build -t mydev-alertmanager:${{ github.sha }} infra/alertmanager/
+          docker build -t mydev-grafana:${{ github.sha }} infra/grafana/
+          docker build -t mydev-prometheus:${{ github.sha }} infra/prometheus/
 
       - name: Trivy Scan All Images
         run: |
