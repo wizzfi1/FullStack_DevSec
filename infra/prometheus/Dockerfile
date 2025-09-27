@@ -1,4 +1,4 @@
-FROM prom/prometheus:v2.53.3  # ← Update to latest patch version
+FROM prom/prometheus:latest  # ← Update to latest patch version
 
 COPY prometheus.yml /etc/prometheus/prometheus.yml
 COPY alert-rules.yml /etc/prometheus/alert-rules.yml

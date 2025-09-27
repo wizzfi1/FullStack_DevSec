@@ -1,4 +1,4 @@
-FROM grafana/grafana:11.3.4  # ← Update to latest patch version
+FROM grafana/grafana:latest  # ← Update to latest patch version
 
 COPY provisioning /etc/grafana/provisioning
 
