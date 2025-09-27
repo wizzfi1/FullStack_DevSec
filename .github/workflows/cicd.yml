@@ -110,8 +110,10 @@ jobs:
     needs: build-test-scan
     if: github.ref == 'refs/heads/develop'
     steps:
-      - name: Checkout Code
+      - name: Checkout Code (full history)
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Trigger Render Staging Deploy
         uses: fjogeleit/http-request-action@v1
@@ -130,15 +132,18 @@ jobs:
           environment: staging
           version: ${{ github.sha }}
           set_commits: auto
-          extra_args: --ignore-missing  # ← Fix: Skip missing previous release
+          extra_args: --ignore-missing
+
 
   deploy-prod:
     runs-on: ubuntu-latest
     needs: build-test-scan
     if: github.ref == 'refs/heads/main'
     steps:
-      - name: Checkout Code
+      - name: Checkout Code (full history)
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Trigger Render Production Deploy
         uses: fjogeleit/http-request-action@v1
@@ -157,7 +162,8 @@ jobs:
           environment: production
           version: ${{ github.sha }}
           set_commits: auto
-          extra_args: --ignore-missing  # ← Fix: Skip missing previous release
+          extra_args: --ignore-missing
+
 
   notify:
     runs-on: ubuntu-latest
