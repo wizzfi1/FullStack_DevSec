@@ -1,44 +1,30 @@
-FullStack DevSecOps Demo
+# 🚀 FullStack DevSecOps Demo
 
-A production-grade fullstack pipeline showcasing modern DevSecOps practices — from secure CI/CD, to observability, to Infrastructure-as-Code (IaC).
-
+A production-grade fullstack pipeline showcasing modern DevSecOps practices — from secure CI/CD to observability and Infrastructure-as-Code (IaC).  
 This project demonstrates how to take a simple Node.js/Express app and wrap it with a battle-tested DevSecOps workflow used in real companies.
 
-🌟 Highlights
+---
 
+## 🌟 Highlights
 
-CI/CD Pipeline: GitHub Actions with linting, testing, dependency audits, Docker builds, Trivy scans, Gitleaks, CodeQL, Checkov & Terrascan.
+- **CI/CD Pipeline**: GitHub Actions with linting, testing, dependency audits, Docker builds, Trivy scans, Gitleaks, CodeQL, Checkov & Terrascan
+- **Secure Containerization**: Hardened Dockerfiles with non-root users and HEALTHCHECK instructions
+- **Runtime Security**: Gitleaks (secret scanning), CodeQL (static analysis), npm audit (dependency vulnerabilities)
+- **Observability Stack**:
+  - Prometheus for metrics collection
+  - Grafana dashboards (CPU %, memory, HTTP request rates, error rate, latency)
+  - Alertmanager + Slack for real-time alerts
+  - Sentry for application-level error monitoring and release tracking
+- **Environments**:
+  - Staging: auto-deploy on `develop`
+  - Production: auto-deploy on `main`
+- **IaC Versioning**: Full `render.yaml` and Helm manifests for portability to Kubernetes (k3s, GKE, EKS)
 
+---
 
-Secure Containerization: Hardened Dockerfiles with non-root users and HEALTHCHECK instructions.
+## 🏗️ Architecture
 
-
-Runtime Security: Gitleaks (secret scanning), CodeQL (static analysis), npm audit (dependency vulnerabilities).
-
-
-Observability Stack:
-
-Prometheus for metrics collection
-
-Grafana dashboards (CPU %, memory, HTTP request rates, error rate, latency)
-
-Alertmanager + Slack for real-time alerts
-
-Sentry for application-level error monitoring and release tracking
-
-
-Environments:
-
-Staging: auto-deploy on develop
-
-Production: auto-deploy on main
-
-
-IaC Versioning: Full render.yaml and Helm manifests for portability to Kubernetes (k3s, GKE, EKS).
-
-🏗️ Architecture
-
-```
+```mermaid
 flowchart TD
     A[GitHub Push] -->|GitHub Actions| B[CI/CD Pipeline]
     B -->|Docker Build + Scan| C[Docker Hub]
@@ -48,179 +34,171 @@ flowchart TD
     F --> G[Grafana Dashboards]
     F --> H[Alertmanager -> Slack]
     E -->|Errors| I[Sentry]
-
 ```
 
-🔄 CI/CD Workflow
+# 🔄 CI/CD Workflow
 
-Key stages from .github/workflows/cicd.yml:
+## ✅ Lint & Test
+- **ESLint** → code quality
+- **Jest** → unit tests
 
-Lint & Test
+## 🔒 Security Scans
+- **npm audit** - dependency vulnerabilities
+- **Trivy** - container vulnerabilities
+- **Gitleaks** - secrets detection
+- **CodeQL** - static analysis
+- **Checkov + Terrascan** - IaC security
 
-ESLint for code quality
+## 🐳 Build & Push
+- Docker image pushed to Docker Hub with commit + latest tags
 
-Jest for unit tests
+## 🚀 Deployments
 
-Security Scans
+### Staging (`develop` branch)
+🔗 **Live Staging App**: [Your Staging URL Here]
 
-npm audit
+### Production (`main` branch)
+🔗 **Live Production App**: [Your Production URL Here]
 
-Trivy (container vulnerabilities)
-
-Gitleaks (secrets)
-
-CodeQL (static analysis)
-
-Checkov + Terrascan (IaC security)
-
-Build & Push
-
-Docker image pushed to Docker Hub with commit + latest tags
-
-Deploy
-
-Render Staging (branch: develop)
-
-Render Prod (branch: main)
-
-Automatic Sentry release tracking
-
-Notify
-
-Slack messages for staging/prod deployments with build status
+## 🔔 Notifications
+Slack messages for staging/prod deployments with build status:
 
 
-📊 Observability
+---
 
-Prometheus
+# 📊 Observability
 
-Scrapes app /metrics endpoint (via prom-client).
+## Prometheus
+- Scrapes app `/metrics` endpoint (via `prom-client`)
+- Collects:
+  - Default Node.js process metrics
+  - `http_requests_total` counter
+  - Latency histogram
 
-Collects:
+🔗 **See live link here**: [Your Prometheus URL Here]
 
-Default Node.js process metrics
+## Grafana Dashboards
+Includes panels for:
+- CPU %
+- Memory usage
+- HTTP requests/sec
+- 5xx error rate
+- 95th percentile latency
 
-http_requests_total counter
-
-Latency histogram
-
-
-Grafana
-
-Preprovisioned dashboards:
-
-CPU %
-
-Memory usage
-
-HTTP requests/sec
-
-5xx error rate
-
-95th percentile latency
+🔗 **See live link here**: [Your Grafana URL Here]
 
 
-Alertmanager
+## Alertmanager
+- Sends alerts to Slack via webhook
+- Starter rules:
+  - CPU > 80% for 2 minutes
+  - Error rate > 5% over 5 minutes
 
-Sends alerts to Slack via webhook.
+## Sentry
+- Captures unhandled exceptions
+- Tied to GitHub Actions release versions
+- Shows "Deployed to Staging/Prod" in release timeline
 
-Starter rules:
-
-CPU > 80% for 2 minutes
-
-Error rate > 5% over 5 minutes
-
-
-Sentry
-
-Captures unhandled exceptions.
-
-Tied to GitHub Actions release versions.
-
-Shows “Deployed to Staging/Prod” in release timeline.
+---
 
 
-🐳 Docker Hardening
+## 📸 Project in Action
+
+### ✅ Lint & Tests Passing
+![Lint + Tests](docs/images/Lint-test.png)
+
+### 🚀 Render Staging Deployment
+![Render Staging Deploy](docs/images/Render-staging.png)
+
+🔗 [Staging App URL](docs/images/Staging-Url.png)
+
+### 🌍 Production Deployment
+![Production URL](docs/images/Prod-url.png)
+
+### 🔔 Slack Notifications
+![Slack Notifications](docs/images/SLACK-NOTIFY.png)
+
+### 📊 Observability with Prometheus & Grafana
+![Prometheus Dashboard](docs/images/Prometheus-dashh.png)
+
+
+
+# 🐳 Docker Hardening
 
 All service images include:
+- `HEALTHCHECK` instructions
+- Non-root user execution
+- Minimal base images (`node:18-alpine`, `alpine:3.20`, etc.)
 
-HEALTHCHECK instructions
+---
 
-Non-root user execution
+# ☸️ Kubernetes (Future-Ready)
 
-Minimal base images (node:18-alpine, alpine:3.20, etc.)
+## Helm charts included for:
+- `myapp` (Node.js/Express)
+- Prometheus
+- Grafana
+- Alertmanager
+
+## Secrets Management
+Secrets managed via K8s Secret resources (Slack webhook, Grafana admin password).
+
+## Supported Deployment Environments
+- **Local dev**: k3s / kind
+- **Cloud**: GKE, EKS, AKS
+
+---
+
+# ⚡ Quick Start (Render)
+
+1. **Fork this repo**
+2. **Set GitHub Actions secrets**:
+   - `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`
+   - `RENDER_API_KEY`, `RENDER_SERVICE_ID`, `RENDER_SERVICE_ID_PROD`
+   - `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT`
+   - `SLACK_WEBHOOK_URL`
+3. **Push to `develop`** → staging deploy
+4. **Merge to `main`** → production deploy
+
+---
 
 
-☸️ Kubernetes (Future-Ready)
 
-Helm charts included for:
-
-myapp (Node.js/Express)
-
-Prometheus
-
-Grafana
-
-Alertmanager
-
-Supports secrets via K8s Secret resources (e.g. Slack webhook, Grafana admin password).
-
-Designed for deployment on:
-
-Local dev: k3s / kind
-
-Cloud: GKE, EKS, AKS
-
-⚡ Quick Start (Render)
-
-Fork this repo
-
-Set secrets in GitHub Actions:
-
-DOCKERHUB_USERNAME / DOCKERHUB_TOKEN
-
-RENDER_API_KEY, RENDER_SERVICE_ID, RENDER_SERVICE_ID_PROD
-
-SENTRY_AUTH_TOKEN, SENTRY_ORG, SENTRY_PROJECT
-
-SLACK_WEBHOOK_URL
-
-Push to develop → staging deploy
-
-Merge to main → production deploy
-
-📂 Repo Structure
-
+📂 Repository Structure
 ```
-.
-├── src/                # Node.js app (Express + Sentry + Prometheus metrics)
-├── infra/              # Infra services
+
+├── src/                    # Node.js app (Express + Sentry + Prometheus metrics)
+├── infra/                  # Infra services
 │   ├── prometheus/
 │   ├── grafana/
 │   └── alertmanager/
-├── helm/               # Helm charts for k8s migration
-├── .github/workflows/  # CI/CD pipelines
-├── render.yaml         # Render IaC config
-└── Dockerfile          # App Dockerfile
-
+├── helm/                   # Helm charts for k8s migration
+├── .github/workflows/      # CI/CD pipelines
+├── render.yaml             # Render IaC config
+└── Dockerfile              # App Dockerfile
 ```
 
-Why This Matters
+🎯 Why This Matters
 
-✅ Full DevSecOps pipeline: not just CI/CD, but integrated security, monitoring, and alerting.
+| Feature                 | Benefit                                                   |
+| ----------------------- | --------------------------------------------------------- |
+| Full DevSecOps pipeline | Integrated security, monitoring, and alerting             |
+| Cloud-native ready      | Helm charts → easy migration to Kubernetes                |
+| Production realism      | Error tracking, observability, secrets mgmt, IaC scanning |
+| Team collaboration      | Slack notifications + Sentry releases → transparency      |
+| Hands-on expertise      | End-to-end modern DevSecOps toolchain experience          |
 
-✅ Cloud-native ready: Helm charts → easy migration to Kubernetes.
-
-✅ Production realism: covers error tracking, observability, secrets management, IaC scanning.
-
-✅ Team collaboration: Slack notifications + Sentry releases → transparent deployments.
-
-✅ Hands-on expertise across Node.js, Docker, GitHub Actions, Sentry, Prometheus, Grafana, Alertmanager, Checkov, Terrascan, Render, Helm.
-
-
-This repo is my portfolio centerpiece: a showcase of how I’d run secure, observable, cloud-ready software delivery in a real engineering org.
 
 
 📬 Contact
 
-If you’re interested in how I can bring end-to-end DevSecOps expertise to your team.
+Interested in how I can bring end-to-end DevSecOps expertise to your team? Let’s connect!
+
+<div align="center">
+
+**Built with ❤️ to demonstrate modern DevSecOps practices**
+
+[![GitHub stars](https://img.shields.io/github/stars/wizzfi1/fullstack-devsecops-demo?style=social)](https://github.com/wizzfi1/fullstack-devsecops-demo)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
+</div>
