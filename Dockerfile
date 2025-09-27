@@ -1,8 +1,7 @@
-FROM node:20-alpine3.21  # ← Update to latest
+FROM node:20-alpine
 
 WORKDIR /app
 
-# Update Alpine packages for security fixes
 RUN apk update && apk upgrade && rm -rf /var/cache/apk/*
 
 COPY package*.json ./
@@ -10,8 +9,7 @@ RUN npm ci --only=production --ignore-scripts
 
 COPY . .
 
-# Create non-root user with high UID
-RUN addgroup -g 1000 -S appgroup && adduser -S appuser -u 1000 -G appgroup
+RUN addgroup -g 1001 -S appgroup && adduser -S appuser -u 1001 -G appgroup
 USER appuser
 
 EXPOSE 3000
