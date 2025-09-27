@@ -1,4 +1,4 @@
-FROM alpine:3.21.4  # ← Update to latest Alpine
+FROM alpine:latest
 
 RUN apk add --no-cache gettext curl tar wget
 
