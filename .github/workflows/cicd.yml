@@ -123,7 +123,7 @@ jobs:
           customHeaders: '{"Accept": "application/json", "Authorization": "Bearer ${{ secrets.RENDER_API_KEY }}"}'
 
       - name: Sentry Release (Staging)
-        uses: getsentry/action-release@v1
+        uses: getsentry/action-release@v2
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
@@ -132,7 +132,7 @@ jobs:
           environment: staging
           version: ${{ github.sha }}
           set_commits: auto
-          extra_args: --ignore-missing
+          ignore_missing: true
 
 
   deploy-prod:
@@ -153,7 +153,7 @@ jobs:
           customHeaders: '{"Accept": "application/json", "Authorization": "Bearer ${{ secrets.RENDER_API_KEY }}"}'
 
       - name: Sentry Release (Production)
-        uses: getsentry/action-release@v1
+        uses: getsentry/action-release@v2
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
@@ -162,7 +162,7 @@ jobs:
           environment: production
           version: ${{ github.sha }}
           set_commits: auto
-          extra_args: --ignore-missing
+          ignore_missing: true #set to true
 
 
   notify:
