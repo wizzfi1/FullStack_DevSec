@@ -1,44 +1,25 @@
-FullStack DevSecOps Demo
+# 🚀 FullStack DevSecOps Demo
 
-A production-grade fullstack pipeline showcasing modern DevSecOps practices — from secure CI/CD, to observability, to Infrastructure-as-Code (IaC).
+A production-grade fullstack pipeline showcasing modern DevSecOps practices — from secure CI/CD to observability and Infrastructure-as-Code (IaC). This project demonstrates how to take a simple Node.js/Express app and wrap it with a battle-tested DevSecOps workflow used in real companies.
 
-This project demonstrates how to take a simple Node.js/Express app and wrap it with a battle-tested DevSecOps workflow used in real companies.
+## 🌟 Highlights
 
-🌟 Highlights
+- **CI/CD Pipeline**: GitHub Actions with linting, testing, dependency audits, Docker builds, Trivy scans, Gitleaks, CodeQL, Checkov & Terrascan
+- **Secure Containerization**: Hardened Dockerfiles with non-root users and HEALTHCHECK instructions
+- **Runtime Security**: Gitleaks (secret scanning), CodeQL (static analysis), npm audit (dependency vulnerabilities)
+- **Observability Stack**:
+  - Prometheus for metrics collection
+  - Grafana dashboards (CPU %, memory, HTTP request rates, error rate, latency)
+  - Alertmanager + Slack for real-time alerts
+  - Sentry for application-level error monitoring and release tracking
+- **Environments**:
+  - Staging: auto-deploy on `develop`
+  - Production: auto-deploy on `main`
+- **IaC Versioning**: Full `render.yaml` and Helm manifests for portability to Kubernetes (k3s, GKE, EKS)
 
+## 🏗️ Architecture
 
-CI/CD Pipeline: GitHub Actions with linting, testing, dependency audits, Docker builds, Trivy scans, Gitleaks, CodeQL, Checkov & Terrascan.
-
-
-Secure Containerization: Hardened Dockerfiles with non-root users and HEALTHCHECK instructions.
-
-
-Runtime Security: Gitleaks (secret scanning), CodeQL (static analysis), npm audit (dependency vulnerabilities).
-
-
-Observability Stack:
-
-Prometheus for metrics collection
-
-Grafana dashboards (CPU %, memory, HTTP request rates, error rate, latency)
-
-Alertmanager + Slack for real-time alerts
-
-Sentry for application-level error monitoring and release tracking
-
-
-Environments:
-
-Staging: auto-deploy on develop
-
-Production: auto-deploy on main
-
-
-IaC Versioning: Full render.yaml and Helm manifests for portability to Kubernetes (k3s, GKE, EKS).
-
-🏗️ Architecture
-
-```
+```mermaid
 flowchart TD
     A[GitHub Push] -->|GitHub Actions| B[CI/CD Pipeline]
     B -->|Docker Build + Scan| C[Docker Hub]
@@ -48,7 +29,6 @@ flowchart TD
     F --> G[Grafana Dashboards]
     F --> H[Alertmanager -> Slack]
     E -->|Errors| I[Sentry]
-
 ```
 
 🔄 CI/CD Workflow
@@ -89,12 +69,11 @@ Notify
 
 Slack messages for staging/prod deployments with build status
 
-
 📊 Observability
 
 Prometheus
 
-Scrapes app /metrics endpoint (via prom-client).
+Scrapes app /metrics endpoint (via prom-client)
 
 Collects:
 
@@ -103,7 +82,6 @@ Default Node.js process metrics
 http_requests_total counter
 
 Latency histogram
-
 
 Grafana
 
@@ -119,10 +97,9 @@ HTTP requests/sec
 
 95th percentile latency
 
-
 Alertmanager
 
-Sends alerts to Slack via webhook.
+Sends alerts to Slack via webhook
 
 Starter rules:
 
@@ -130,15 +107,13 @@ CPU > 80% for 2 minutes
 
 Error rate > 5% over 5 minutes
 
-
 Sentry
 
-Captures unhandled exceptions.
+Captures unhandled exceptions
 
-Tied to GitHub Actions release versions.
+Tied to GitHub Actions release versions
 
-Shows “Deployed to Staging/Prod” in release timeline.
-
+Shows "Deployed to Staging/Prod" in release timeline
 
 🐳 Docker Hardening
 
@@ -149,7 +124,6 @@ HEALTHCHECK instructions
 Non-root user execution
 
 Minimal base images (node:18-alpine, alpine:3.20, etc.)
-
 
 ☸️ Kubernetes (Future-Ready)
 
@@ -189,38 +163,47 @@ Push to develop → staging deploy
 
 Merge to main → production deploy
 
-📂 Repo Structure
+📂 Repository Structure
 
 ```
-.
-├── src/                # Node.js app (Express + Sentry + Prometheus metrics)
-├── infra/              # Infra services
+├── src/                    # Node.js app (Express + Sentry + Prometheus metrics)
+├── infra/                  # Infra services
 │   ├── prometheus/
 │   ├── grafana/
 │   └── alertmanager/
-├── helm/               # Helm charts for k8s migration
-├── .github/workflows/  # CI/CD pipelines
-├── render.yaml         # Render IaC config
-└── Dockerfile          # App Dockerfile
+├── helm/                   # Helm charts for k8s migration
+├── .github/workflows/      # CI/CD pipelines
+├── render.yaml             # Render IaC config
+└── Dockerfile              # App Dockerfile
 
 ```
+🎯 Why This Matters
 
-Why This Matters
+Feature	Benefit
 
-✅ Full DevSecOps pipeline: not just CI/CD, but integrated security, monitoring, and alerting.
+Full DevSecOps pipeline	Not just CI/CD, but integrated security, monitoring, and alerting
 
-✅ Cloud-native ready: Helm charts → easy migration to Kubernetes.
+Cloud-native ready	Helm charts → easy migration to Kubernetes
 
-✅ Production realism: covers error tracking, observability, secrets management, IaC scanning.
+Production realism	Covers error tracking, observability, secrets management, IaC scanning
 
-✅ Team collaboration: Slack notifications + Sentry releases → transparent deployments.
+Team collaboration	Slack notifications + Sentry releases → transparent deployments
 
-✅ Hands-on expertise across Node.js, Docker, GitHub Actions, Sentry, Prometheus, Grafana, Alertmanager, Checkov, Terrascan, Render, Helm.
+Hands-on expertise	End-to-end experience across modern DevSecOps toolchain
 
 
-This repo is my portfolio centerpiece: a showcase of how I’d run secure, observable, cloud-ready software delivery in a real engineering org.
-
+This repo serves as my portfolio centerpiece: a showcase of how I'd run secure, observable, cloud-ready software delivery in a real engineering organization.
 
 📬 Contact
 
-If you’re interested in how I can bring end-to-end DevSecOps expertise to your team.
+Interested in how I can bring end-to-end DevSecOps expertise to your team? Let's connect!
+
+<div align="center">
+
+Built with ❤️ to demonstrate modern DevSecOps practices
+
+https://img.shields.io/github/stars/yourusername/fullstack-devsecops-demo?style=social
+https://img.shields.io/badge/License-MIT-blue.svg
+
+</div> ```
+
