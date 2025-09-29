@@ -14,6 +14,7 @@ spec:
         app: alertmanager
     spec:
       automountServiceAccountToken: false
+
       # Pod-level context — only for pod-wide settings
       securityContext:
         runAsNonRoot: true
@@ -35,7 +36,8 @@ spec:
             - name: alertmanager-secret-vol
               mountPath: /etc/secrets/alertmanager
               readOnly: true
-          # CONTAINER-LEVEL SECURITY CONTEXT — THIS IS WHAT MATTERS
+              
+          # CONTAINER-LEVEL SECURITY CONTEXT 
           securityContext:
             runAsNonRoot: true
             runAsUser: 10001
