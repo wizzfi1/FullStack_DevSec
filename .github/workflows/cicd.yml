@@ -17,7 +17,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # ← Crucial for Sentry and Checkov to see full history
+          fetch-depth: 0  #  Crucial for Sentry and Checkov to see full history
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -36,7 +36,7 @@ jobs:
       - name: Dependency Audit
         run: npm audit --audit-level=high
 
-      # --- IaC Security Scans ---
+      #  IaC Security Scans 
       - name: Checkov Scan (IaC security)
         run: |
           pip install checkov
@@ -60,7 +60,7 @@ jobs:
           sudo mv terrascan /usr/local/bin/
           terrascan scan -d infra/ -i terraform -t k8s || echo "Terrascan completed"
 
-      # --- Build + Scan Image ---
+      #  Build + Scan Image
       - name: Build Docker Images
         run: |
           docker build -t mydev:${{ github.sha }} .
@@ -162,7 +162,7 @@ jobs:
           environment: production
           version: ${{ github.sha }}
           set_commits: auto
-          ignore_missing: true #set to true
+          ignore_missing: true 
 
 
   notify:

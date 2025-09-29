@@ -1,4 +1,4 @@
-# Use official Grafana image with pinned version (avoid 'latest')
+# Use official Grafana image with pinned version
 FROM grafana/grafana:11.1.4
 
 # Copy provisioning config files

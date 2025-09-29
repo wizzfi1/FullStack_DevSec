@@ -1,5 +1,12 @@
 # 🚀 FullStack DevSecOps Demo
 
+A production-grade fullstack pipeline showcasing modern DevSecOps practices — from secure CI/CD to observability and Infrastructure-as-Code (IaC).  
+This project demonstrates how to take a simple Node.js/Express app and wrap it with a battle-tested DevSecOps workflow used in real companies.
+
+---
+
+## 🌟 Highlights
+
 - **CI/CD Pipeline**: GitHub Actions with linting, testing, dependency audits, Docker builds, Trivy scans, Gitleaks, CodeQL, Checkov & Terrascan
 - **Secure Containerization**: Hardened Dockerfiles with non-root users and HEALTHCHECK instructions
 - **Runtime Security**: Gitleaks (secret scanning), CodeQL (static analysis), npm audit (dependency vulnerabilities)
@@ -13,6 +20,7 @@
   - Production: auto-deploy on `main`
 - **IaC Versioning**: Full `render.yaml` and Helm manifests for portability to Kubernetes (k3s, GKE, EKS)
 
+---
 
 ## 🏗️ Architecture
 
@@ -58,11 +66,24 @@ Slack messages for staging/prod deployments with build status:
 
 ---
 
+# 📊 Observability
 
+## Prometheus
+- Scrapes app `/metrics` endpoint (via `prom-client`)
+- Collects:
+  - Default Node.js process metrics
+  - `http_requests_total` counter
+  - Latency histogram
 
 🔗 **See live link here**: [Your Prometheus URL Here]
 
-
+## Grafana Dashboards
+Includes panels for:
+- CPU %
+- Memory usage
+- HTTP requests/sec
+- 5xx error rate
+- 95th percentile latency
 
 🔗 **See live link here**: [Your Grafana URL Here]
 
@@ -78,6 +99,7 @@ Slack messages for staging/prod deployments with build status:
 - Tied to GitHub Actions release versions
 - Shows "Deployed to Staging/Prod" in release timeline
 
+---
 
 
 ## 📸 Project in Action
@@ -96,13 +118,19 @@ Slack messages for staging/prod deployments with build status:
 ### 🔔 Slack Notifications
 ![Slack Notifications](docs/images/SLACK-NOTIFY.png)
 
+### 📊 Observability with Prometheus & Grafana
+![Prometheus Dashboard](docs/images/Prometheus-dashh.png)
 
+
+
+# 🐳 Docker Hardening
 
 All service images include:
 - `HEALTHCHECK` instructions
 - Non-root user execution
 - Minimal base images (`node:18-alpine`, `alpine:3.20`, etc.)
 
+---
 
 # ☸️ Kubernetes (Future-Ready)
 
@@ -148,17 +176,29 @@ Secrets managed via K8s Secret resources (Slack webhook, Grafana admin password)
 ├── .github/workflows/      # CI/CD pipelines
 ├── render.yaml             # Render IaC config
 └── Dockerfile              # App Dockerfile
+```
 
 🎯 Why This Matters
 
+| Feature                 | Benefit                                                   |
+| ----------------------- | --------------------------------------------------------- |
+| Full DevSecOps pipeline | Integrated security, monitoring, and alerting             |
+| Cloud-native ready      | Helm charts → easy migration to Kubernetes                |
+| Production realism      | Error tracking, observability, secrets mgmt, IaC scanning |
+| Team collaboration      | Slack notifications + Sentry releases → transparency      |
+| Hands-on expertise      | End-to-end modern DevSecOps toolchain experience          |
+
+
+
+📬 Contact
 
 Interested in how I can bring end-to-end DevSecOps expertise to your team? Let’s connect!
 
+<div align="center">
 
+**Built with ❤️ to demonstrate modern DevSecOps practices**
 
 [![GitHub stars](https://img.shields.io/github/stars/wizzfi1/fullstack-devsecops-demo?style=social)](https://github.com/wizzfi1/fullstack-devsecops-demo)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-
 </div>
-
