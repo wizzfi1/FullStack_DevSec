@@ -111,7 +111,7 @@ Includes panels for:
 ![Render Staging Deploy](docs/images/Render-staging.png)
 
 ### 🌍 Staging Deployment
-🔗 [Staging App](docs/images/Staging-Url.png)
+![Staging App](docs/images/Staging-Url.png)
 
 ### 🌍 Production Deployment
 ![Production App](docs/images/Prod-url.png)
