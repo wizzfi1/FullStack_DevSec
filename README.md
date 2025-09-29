@@ -55,10 +55,10 @@ flowchart TD
 ## 🚀 Deployments
 
 ### Staging (`develop` branch)
-🔗 **Live Staging App**: [Your Staging URL Here]
+🔗 **Live Staging App**: https://mydev-staging.onrender.com
 
 ### Production (`main` branch)
-🔗 **Live Production App**: [Your Production URL Here]
+🔗 **Live Production App**: https://mydev-prod.onrender.com
 
 ## 🔔 Notifications
 Slack messages for staging/prod deployments with build status:
@@ -75,7 +75,7 @@ Slack messages for staging/prod deployments with build status:
   - `http_requests_total` counter
   - Latency histogram
 
-🔗 **See live link here**: [Your Prometheus URL Here]
+🔗 **See live link here**: https://prometheus-4d0b.onrender.com
 
 ## Grafana Dashboards
 Includes panels for:
@@ -85,7 +85,7 @@ Includes panels for:
 - 5xx error rate
 - 95th percentile latency
 
-🔗 **See live link here**: [Your Grafana URL Here]
+🔗 **See live link here**: https://grafana-iyio.onrender.com
 
 
 ## Alertmanager
@@ -110,10 +110,11 @@ Includes panels for:
 ### 🚀 Render Staging Deployment
 ![Render Staging Deploy](docs/images/Render-staging.png)
 
-🔗 [Staging App URL](docs/images/Staging-Url.png)
+### 🌍 Staging Deployment
+![Staging App](docs/images/Staging-Url.png)
 
 ### 🌍 Production Deployment
-![Production URL](docs/images/Prod-url.png)
+![Production App](docs/images/Prod-url.png)
 
 ### 🔔 Slack Notifications
 ![Slack Notifications](docs/images/SLACK-NOTIFY.png)
