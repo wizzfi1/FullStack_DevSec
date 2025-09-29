@@ -199,7 +199,7 @@ Interested in how I can bring end-to-end DevSecOps expertise to your team? Let�
 
 **Built with ❤️ to demonstrate modern DevSecOps practices**
 
-[![GitHub stars](https://img.shields.io/github/stars/wizzfi1/fullstack-devsecops-demo?style=social)](https://github.com/wizzfi1/fullstack-devsecops-demo)
+[![GitHub stars](https://img.shields.io/github/stars/wizzfi1/fullstack_devsec?style=social)](https://github.com/wizzfi1/fullstack_devsec)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 </div>
