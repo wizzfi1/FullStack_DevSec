@@ -162,7 +162,7 @@ jobs:
           environment: production
           version: ${{ github.sha }}
           set_commits: auto
-          ignore_missing: true
+          ignore_missing: true #set to true
 
 
   notify:
